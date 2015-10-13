@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Software Pathfinder"
+            id="SoftwarePathfinder">
+      </category>
+      <view
+            name="Swarm Debugging Manager"
+            icon="icons/project.gif"
+            category="SoftwarePathfinder"
+            class="swarm.manager.views.ManagerView"
+            id="swarm.manager.views.ManagerView">
+      </view>
+      <view
+            name="Method Call Graph"
+            icon="icons/project.gif"
+            category="SoftwarePathfinder"
+            class="swarm.manager.views.DynamicMethodCallGraph"
+            id="swarm.manager.views.DynamicMethodCallGraph">
+      </view>      
+      <view
+            category="SoftwarePathfinder"
+            name="Sequence Stack Diagram"
+            icon="icons/project.gif"
+            class="swarm.manager.views.SequencePathView"
+            id="swarm.manager.views.SequencePathView">
+      </view>
+      <view
+            category="SoftwarePathfinder"
+            class="swarm.manager.views.StartingMethodView"
+            icon="icons/project.gif"
+            id="swarm.manager.views.StartingMethodView"
+            name="Starting Method Search">
+      </view>
+      <view
+            category="SoftwarePathfinder"
+            class="swarm.manager.views.EndingMethodView"
+            icon="icons/project.gif"
+            id="swarm.manager.views.EndingMethodView"
+            name="Ending Method Search">
+      </view>
+      <view
+            category="SoftwarePathfinder"
+            class="swarm.manager.views.BreakpointView"
+            icon="icons/project.gif"
+            id="swarm.manager.views.BreakpointView"
+            name="Breakpoint Search">
+      </view>
+      <view
+            category="SoftwarePathfinder"
+            class="swarm.manager.views.DashboardBrowser"
+            icon="icons/project.gif"
+            id="swarm.manager.views.DashboardBrowser"
+            name="Swarm Dashboard">
+      </view>
+      <view
+            category="SoftwarePathfinder"
+            class="swarm.manager.views.Neo4JBrowser"
+            icon="icons/project.gif"
+            id="swarm.manager.views.Neo4JBrowser"
+            name="Neo4J Browser">
+      </view>                     
+   </extension>
+</plugin>

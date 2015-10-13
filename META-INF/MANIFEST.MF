@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SwarmManager
+Bundle-SymbolicName: SwarmManager; singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Activator: swarm.manager.Activator
+Bundle-Vendor: Software Pathfinder
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.debug.core;bundle-version="3.9.1",
+ org.eclipse.jdt.debug;bundle-version="3.8.102",
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui;bundle-version="3.10.2",
+ org.eclipse.ui.editors;bundle-version="3.8.200",
+ org.eclipse.jface.text;bundle-version="3.9.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: lib/gson-2.3.2.jar,
+ lib/elasticsearch-1.5.1.jar,
+ lib/lucene-core-4.10.4.jar,
+ .,
+ lib/antlr-runtime-3.5.jar,
+ lib/asm-4.1.jar,
+ lib/jna-4.1.0.jar,
+ lib/lucene-analyzers-common-4.10.4.jar,
+ lib/lucene-expressions-4.10.4.jar,
+ lib/lucene-grouping-4.10.4.jar,
+ lib/lucene-highlighter-4.10.4.jar,
+ lib/lucene-join-4.10.4.jar,
+ lib/lucene-memory-4.10.4.jar,
+ lib/lucene-misc-4.10.4.jar,
+ lib/lucene-queries-4.10.4.jar,
+ lib/lucene-queryparser-4.10.4.jar,
+ lib/lucene-sandbox-4.10.4.jar,
+ lib/lucene-spatial-4.10.4.jar,
+ lib/lucene-suggest-4.10.4.jar,
+ lib/spatial4j-0.4.1.jar
