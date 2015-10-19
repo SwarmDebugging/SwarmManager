@@ -2,6 +2,7 @@ package swarm.core.domain;
 
 import java.util.List;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.TypeService;
 
 public class Type extends Domain {
@@ -9,11 +10,11 @@ public class Type extends Domain {
 	private Session session;
 	private Namespace namespace;
 	
-
 	private String name;
 	private String fullName;
 	private String fullPath;
 
+	private String source;
 
 	public Session getSession() {
 		return session;
@@ -63,13 +64,19 @@ public class Type extends Domain {
 		this.source = source;
 	}
 
-	private String source;
-
 	public void create() throws Exception {
 		TypeService.create(this);
 	}
 	
 	public List<Method> getMethods() throws Exception {
 		return TypeService.getMethods(this);
+	}
+	
+	public String toString() {
+		return this.fullName;
+	}
+	
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.TYPES + "/" + getId(); 
 	}
 }

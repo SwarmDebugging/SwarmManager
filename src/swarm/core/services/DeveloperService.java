@@ -3,13 +3,13 @@ package swarm.core.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import swarm.core.domain.Developer;
-import swarm.core.domain.Project;
-import swarm.core.server.SwarmServer;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
+import swarm.core.domain.Project;
+import swarm.core.server.SwarmServer;
+import swarm.core.domain.Developer;
 
 public class DeveloperService {
 
@@ -52,7 +52,7 @@ public class DeveloperService {
 
 		String response;
 		try {
-			response = server.get("developer/projects?idDeveloper=" + developer.getId());
+			response = server.get("/projects/getByDeveloperId?developerId=" + developer.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

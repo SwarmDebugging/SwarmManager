@@ -3,6 +3,7 @@ package swarm.core.domain;
 import java.util.Date;
 import java.util.List;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.SessionService;
 
 public class Session extends Domain {
@@ -133,5 +134,9 @@ public class Session extends Domain {
 	
 	public List<Method> getEndingMethods() {
 		return SessionService.getEndingMethods(this);
+	}
+	
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.SESSIONS + "/" + getId(); 
 	}
 }

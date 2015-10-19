@@ -2,6 +2,7 @@ package swarm.core.domain;
 
 import org.eclipse.jdt.core.IJavaProject;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.ProjectService;
 
 public class Project extends Domain {
@@ -42,4 +43,9 @@ public class Project extends Domain {
 		}
 		return false;
 	}
+	
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.PROJECTS + "/" + getId(); 
+	}
+
 }

@@ -20,4 +20,6 @@ public abstract class Domain {
 	public boolean isLoaded() {
 		return id > -1;
 	}
+	
+	public abstract String getURI();
 }

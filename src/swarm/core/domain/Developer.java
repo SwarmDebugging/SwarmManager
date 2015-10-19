@@ -2,6 +2,7 @@ package swarm.core.domain;
 
 import java.util.List;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.DeveloperService;
 
 public class Developer extends Domain {
@@ -36,5 +37,9 @@ public class Developer extends Domain {
 	
 	public List<Project> getProjects() {
 		return DeveloperService.getProjects(this);
+	}
+	
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.DEVELOPERS + "/" + getId(); 
 	}
 }

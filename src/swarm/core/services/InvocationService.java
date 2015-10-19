@@ -22,10 +22,10 @@ public class InvocationService {
 		SwarmServer server = SwarmServer.getInstance();
 		
 		Map<String, Object> data = new HashMap<>();
-		data.put("invoked", invocation.getInvoked().getId());
-		data.put("invoking", invocation.getInvoking().getId());
-		data.put("session", invocation.getSession().getId());
-		data.put("event", invocation.getEvent().getId());
+		data.put("invoked", invocation.getInvoked().getURI());
+		data.put("invoking", invocation.getInvoking().getURI());
+		data.put("session", invocation.getSession().getURI());
+		data.put("event", invocation.getEvent().getURI());
 
 		String json = JSON.build(data);
 		String response = server.create(SwarmServer.INVOCATIONS, json);
@@ -50,7 +50,7 @@ public class InvocationService {
 		
 		String response;
 		try {
-			response = server.get("invocation/get?sessionId="+session.getId()+"&mInvoking=" + invoking.getId() + "&mInvoked="+invoked.getId());
+			response = server.get("invocations/getInvocationsByMethods?sessionId="+session.getId()+"&invokingId=" + invoking.getId() + "&invokedId="+invoked.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -79,6 +79,7 @@ public class InvocationService {
 	}
 
 	public static boolean contains(Invocation invocation) {
+		//TODO Create a specific query for counting invocations. 
 		List<Invocation> list = getInvocationsByMethods(invocation.getSession(), invocation.getInvoking(),invocation.getInvoked()); 
 		return list.size() > 0;
 	}

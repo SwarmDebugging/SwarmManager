@@ -1,5 +1,6 @@
 package swarm.core.domain;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.MethodService;
 
 public class Method extends Domain {
@@ -56,4 +57,9 @@ public class Method extends Domain {
 	public void create() throws Exception {
 		MethodService.create(this);
 	}
+	
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.METHODS + "/" + getId(); 
+	}
+
 }

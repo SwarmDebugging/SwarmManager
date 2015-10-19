@@ -18,7 +18,7 @@ public class MethodService {
 		SwarmServer server = SwarmServer.getInstance();
 
 		Map<String, Object> data = new HashMap<>();
-		data.put("type", method.getType().getId());
+		data.put("type", method.getType().getURI());
 		data.put("name", method.getName());
 		data.put("signature", method.getSignature());
 		data.put("key", method.getKey());

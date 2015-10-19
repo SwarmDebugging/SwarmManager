@@ -1,5 +1,6 @@
 package swarm.core.domain;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.BreakpointService;
 
 public class Breakpoint extends Domain {
@@ -70,4 +71,10 @@ public class Breakpoint extends Domain {
 			return id == ((Breakpoint) object).getId();
 		}
 		return false;
-	}}
+	}
+
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.BREAKPOINTS + "/" + getId(); 
+	}
+	
+}

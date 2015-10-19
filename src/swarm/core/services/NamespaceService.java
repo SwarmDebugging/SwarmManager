@@ -16,7 +16,7 @@ public class NamespaceService {
 
 		String response;
 		try {
-			response = server.get("namespace/byFullPath?path=" + namespacePath);
+			response = server.get("namespaces/findByFullPath?fullPath=" + namespacePath);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

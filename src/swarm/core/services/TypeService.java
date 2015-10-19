@@ -31,7 +31,7 @@ public class TypeService {
 		SwarmServer server = SwarmServer.getInstance();
 
 		String response;
-		response = server.get("type/methods?idType=" + type.getId());
+		response = server.get("methods/getByTypeId?typeId=" + type.getId());
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
 
@@ -80,8 +80,8 @@ public class TypeService {
 		data.put("name", type.getName());
 		data.put("fullName", type.getFullName());
 		data.put("fullPath", type.getFullPath());
-		data.put("session", type.getSession().getId());
-		data.put("namespace", type.getNamespace().getId());
+		data.put("session", type.getSession().getURI());
+		data.put("namespace", type.getNamespace().getURI());
 		data.put("source", type.getSource());
 
 		String json = JSON.build(data);

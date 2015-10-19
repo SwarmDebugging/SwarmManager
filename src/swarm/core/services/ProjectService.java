@@ -13,6 +13,7 @@ import swarm.core.domain.Project;
 import swarm.core.domain.Session;
 import swarm.core.server.SwarmServer;
 import swarm.core.util.WorkbenchUtil;
+import swarm.core.services.DeveloperService;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -79,7 +80,7 @@ public class ProjectService {
 
 		String response;
 		try {
-			response = server.get(SwarmServer.PROJECTS);
+			response = server.get(SwarmServer.PROJECTS+"/all");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

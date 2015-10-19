@@ -1,5 +1,6 @@
 package swarm.core.domain;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.NamespaceService;
 
 public class Namespace extends Domain {
@@ -35,5 +36,9 @@ public class Namespace extends Domain {
 
 	public void create() throws Exception {
 		NamespaceService.create(this);
+	}
+	
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.NAMESPACES + "/" + getId(); 
 	}
 }

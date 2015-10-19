@@ -2,6 +2,7 @@ package swarm.core.domain;
 
 import java.util.Date;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.EventService;
 
 public class Event extends Domain {
@@ -85,4 +86,9 @@ public class Event extends Domain {
 	public void create() throws Exception {
 		EventService.create(this);
 	}
+	
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.EVENTS + "/" + getId(); 
+	}
+	
 }

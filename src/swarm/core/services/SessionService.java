@@ -17,6 +17,7 @@ import swarm.core.domain.Project;
 import swarm.core.domain.Session;
 import swarm.core.domain.Type;
 import swarm.core.server.SwarmServer;
+import swarm.core.services.DeveloperService;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -30,8 +31,8 @@ public class SessionService {
 		SwarmServer server = SwarmServer.getInstance();
 		
 		Map<String, Object> data = new HashMap<>();
-		data.put("project", session.getProject().getId());
-		data.put("developer", session.getDeveloper().getId());
+		data.put("project", session.getProject().getURI());
+		data.put("developer", session.getDeveloper().getURI());
 		data.put("purpose", session.getPurpose());
 		data.put("description", session.getDescription());
 		data.put("label", session.getLabel());
@@ -55,7 +56,7 @@ public class SessionService {
 
 		String response;
 		try {
-			response = server.get("session/sessions?idProject=" + project.getId()+"&idDeveloper="+developer.getId());
+			response = server.get("sessions/find?projectId=" + project.getId()+"&developerId="+developer.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -82,11 +83,17 @@ public class SessionService {
 		SwarmServer server = SwarmServer.getInstance();
 		
 		Map<String, Object> data = new HashMap<>();
-		Date now = Calendar.getInstance().getTime();
 		
+		Date now = Calendar.getInstance().getTime();
+		session.setStarted(now);
 		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-		String date = df.format(now);
-		data.put("started", date);
+		
+		data.put("project", session.getProject().getURI());
+		data.put("developer", session.getDeveloper().getURI());
+		data.put("purpose", session.getPurpose());
+		data.put("description", session.getDescription());
+		data.put("label", session.getLabel());		
+		data.put("started", df.format(now));
 		
 		String json = JSON.build(data);
 		String response = server.update(SwarmServer.SESSIONS + "/" + session.getId(), json);
@@ -106,10 +113,15 @@ public class SessionService {
 		
 		Map<String, Object> data = new HashMap<>();
 		Date now = Calendar.getInstance().getTime();
-		
 		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-		String date = df.format(now);
-		data.put("finished", date);
+
+		data.put("finished", df.format(now));
+		data.put("project", session.getProject().getURI());
+		data.put("developer", session.getDeveloper().getURI());
+		data.put("purpose", session.getPurpose());
+		data.put("description", session.getDescription());
+		data.put("label", session.getLabel());		
+		data.put("started", df.format(session.getStarted()));
 		
 		String json = JSON.build(data);
 		String response = server.update(SwarmServer.SESSIONS + "/" + session.getId(), json);
@@ -128,24 +140,24 @@ public class SessionService {
 		session.setId(element.getAsJsonObject().get("id").getAsInt());
 		session.setLabel(element.getAsJsonObject().get("label").getAsString());
 		
-		if(!element.getAsJsonObject().get("description").isJsonNull()) {
+		if(element.getAsJsonObject().has("description") && !element.getAsJsonObject().get("description").isJsonNull()) {
 			session.setDescription(element.getAsJsonObject().get("description").getAsString());
 		}
 
-		if(!element.getAsJsonObject().get("purpose").isJsonNull()) {
+		if(element.getAsJsonObject().has("purpose") && !element.getAsJsonObject().get("purpose").isJsonNull()) {
 			session.setPurpose(element.getAsJsonObject().get("purpose").getAsString());
 		}
 		
 		try {
 			DateFormat format = new SimpleDateFormat(DATE_FORMAT);
 
-			if(!element.getAsJsonObject().get("started").isJsonNull()) {
+			if(element.getAsJsonObject().has("started") && !element.getAsJsonObject().get("started").isJsonNull()) {
 				String string = element.getAsJsonObject().get("started").getAsString();
      			Date date = format.parse(string);
 				session.setStarted(date);
 			}
 
-			if(!element.getAsJsonObject().get("finished").isJsonNull()) {
+			if(element.getAsJsonObject().has("finished") && !element.getAsJsonObject().get("finished").isJsonNull()) {
 				String string = element.getAsJsonObject().get("finished").getAsString();
 				Date date = format.parse(string);
 				session.setFinished(date);
@@ -174,7 +186,7 @@ public class SessionService {
 
 		String response;
 		try {
-			response = server.get("session/types?idSession=" + session.getId());
+			response = server.get("types/getBySessionId?sessionId=" + session.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

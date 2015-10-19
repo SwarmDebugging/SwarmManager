@@ -8,7 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class SwarmServer {
-	
+
 	public static final String SESSIONS = "sessions";
 	public static final String DEVELOPERS = "developers";
 	public static final String PROJECTS = "projects";
@@ -18,34 +18,34 @@ public class SwarmServer {
 	public static final String EVENTS = "events";
 	public static final String METHODS = "methods";
 	public static final String INVOCATIONS = "invocations";
-	
+
 	private static final String POST = "POST";
 	private static final String PUT = "PUT";
 
 	private static String DEFAULT_URL = "http://localhost:8080/";
-	private static SwarmServer server; 
-	
+	private static SwarmServer server;
+
 	private String serverUrl;
-	
+
 	public static SwarmServer getInstance() {
-		if(server == null) {
+		if (server == null) {
 			server = new SwarmServer(DEFAULT_URL);
 		}
 		return server;
 	}
 
 	public static SwarmServer getInstance(String url) {
-		if(server == null || !server.getServerUrl().equals(url)) {
-			if(!url.endsWith("/")) {
+		if (server == null || !server.getServerUrl().equals(url)) {
+			if (!url.endsWith("/")) {
 				url += "/";
 			}
-			
+
 			server = new SwarmServer(url);
 		}
-	
+
 		return server;
 	}
-	
+
 	private SwarmServer(String url) {
 		this.serverUrl = url;
 	}
@@ -53,24 +53,23 @@ public class SwarmServer {
 	public String getServerUrl() {
 		return serverUrl;
 	}
-	
+
 	public String get(String message) throws Exception {
 		URL url = new URL(serverUrl + message);
 		System.out.println(url);
 		return response(url);
 	}
-	
+
 	public String create(String message, String request) throws Exception {
 		URL url = new URL(serverUrl + message);
 		return request(url, request, POST);
 	}
-	
+
 	public String update(String message, String request) throws Exception {
 		URL url = new URL(serverUrl + message);
 		return request(url, request, PUT);
 	}
 
-	
 	private String response(URL url) throws Exception {
 		URLConnection connection = url.openConnection();
 		connection.setDoOutput(true);
@@ -87,10 +86,10 @@ public class SwarmServer {
 		}
 
 		reader.close();
-
+		
 		return response.toString();
-	}	
-	
+	}
+
 	private String request(URL url, String request, String method) throws Exception {
 		HttpURLConnection urlConnection;
 		urlConnection = (HttpURLConnection) url.openConnection();
@@ -109,6 +108,7 @@ public class SwarmServer {
 		StringBuilder response = new StringBuilder();
 		int result = urlConnection.getResponseCode();
 
+
 		try {
 			if (result == HttpURLConnection.HTTP_CREATED || result == HttpURLConnection.HTTP_OK) {
 				BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -117,21 +117,31 @@ public class SwarmServer {
 					response.append(line);
 				}
 				br.close();
-				return response.toString();
+
+				String location = urlConnection.getHeaderField("Location");
+				Long id = Long.decode(location.substring(location.lastIndexOf("/") + 1));
+				
+				String s;
+				if(id > -1) {
+					response.deleteCharAt(0);
+					s = "{\"id\": \"" + id + "\" ," + response.toString();
+				} else {
+					s = response.toString();
+				}
+
+				return s;
 			} else {
-				response.append(urlConnection.getResponseMessage());
-				throw new Exception("Fail to submit " + request + " to " + url + ". Server Response -> " + result + " "
-						+ response);
+				return "";
 			}
 		} finally {
 			urlConnection.disconnect();
 		}
 	}
-	
+
 	public boolean isOk() {
 		try {
-			String status = get("serverStatus");
-			return status.equals("OK");
+			String status = get("health");
+			return status.contains("UP");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

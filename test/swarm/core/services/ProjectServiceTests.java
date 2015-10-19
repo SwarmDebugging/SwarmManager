@@ -7,6 +7,7 @@ import org.junit.Test;
 import swarm.core.domain.Developer;
 import swarm.core.domain.Method;
 import swarm.core.domain.Project;
+import swarm.core.services.DeveloperService;
 
 public class ProjectServiceTests {
 	

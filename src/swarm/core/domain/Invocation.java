@@ -1,5 +1,6 @@
 package swarm.core.domain;
 
+import swarm.core.server.SwarmServer;
 import swarm.core.services.InvocationService;
 
 public class Invocation extends Domain {
@@ -60,6 +61,11 @@ public class Invocation extends Domain {
 			return i.session.id == session.id && i.invoking.id == invoking.id && i.invoked.id == invoked.id;
 		}
 		return false;
-	}	
+	}
+	
+	public String getURI() {
+		return SwarmServer.getInstance().getServerUrl() + SwarmServer.INVOCATIONS + "/" + getId(); 
+	}
+
 }
 

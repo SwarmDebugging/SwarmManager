@@ -16,10 +16,13 @@ public class EventService {
 		SwarmServer server = SwarmServer.getInstance();
 
 		Map<String, Object> data = new HashMap<>();
-		data.put("session", event.getSession().getId());
-		data.put("method", event.getMethod().getId());
+		data.put("session", event.getSession().getURI());
+		data.put("method", event.getMethod().getURI());
 		data.put("detail", event.getDetail());
 		data.put("kind", event.getKind());
+		data.put("charEnd", event.getCharEnd());
+		data.put("charStart", event.getCharStart());
+		data.put("lineNumber", event.getLineNumber());
 
 		String json = JSON.build(data);
 		String response = server.create(SwarmServer.EVENTS, json);

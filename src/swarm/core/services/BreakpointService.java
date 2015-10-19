@@ -16,8 +16,8 @@ public class BreakpointService {
 		SwarmServer server = SwarmServer.getInstance();
 
 		Map<String, Object> data = new HashMap<>();
-		data.put("type", breakpoint.getType().getId());
-		data.put("session", breakpoint.getSession().getId());
+		data.put("type", breakpoint.getType().getURI());
+		data.put("session", breakpoint.getSession().getURI());
 		data.put("lineNumber", breakpoint.getLineNumber());
 		data.put("charStart", breakpoint.getCharStart());
 		data.put("charEnd", breakpoint.getCharEnd());
