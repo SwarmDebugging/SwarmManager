@@ -47,29 +47,36 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		System.out.println("Event DebugListner " + now);
-		for (DebugEvent debugEvent : events) {
-			try {
-				if (debugEvent.getKind() == DebugEvent.CREATE && !session.isActive()) {
-					if(debugEvent.getSource() instanceof RuntimeProcess) {
-						process = (RuntimeProcess) debugEvent.getSource();
-						session.start();
-					}
-					return;
-				} else if (process != null && process.isTerminated()) {
-					DebugPlugin.getDefault().removeDebugEventListener(this);
-					stopAction.run();
-					return;
-				} else if (debugEvent.getDetail() == DebugEvent.STEP_INTO) {
-					isStepInto = true;
-					isBreakpoint = false;
-				} else if (debugEvent.getDetail() == DebugEvent.BREAKPOINT) {
-					isBreakpoint = true;
-					isStepInto = false;
-				} else {
-					isBreakpoint = false;
-					isStepInto = isStepInto && debugEvent.getKind() == DebugEvent.SUSPEND;
-				}
 
+		for (DebugEvent debugEvent : events) {
+
+			if (debugEvent.getKind() == DebugEvent.CREATE && !session.isActive()) {
+				if (debugEvent.getSource() instanceof RuntimeProcess) {
+					process = (RuntimeProcess) debugEvent.getSource();
+					try {
+						session.start();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return;
+			} else if (process != null && process.isTerminated()) {
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+				stopAction.run();
+				return;
+			} else if (debugEvent.getDetail() == DebugEvent.STEP_INTO) {
+				isStepInto = true;
+				isBreakpoint = false;
+			} else if (debugEvent.getDetail() == DebugEvent.BREAKPOINT) {
+				isBreakpoint = true;
+				isStepInto = false;
+			} else {
+				isBreakpoint = false;
+				isStepInto = isStepInto && debugEvent.getKind() == DebugEvent.SUSPEND;
+			}
+
+			try {
 				if (debugEvent.getSource() != null && debugEvent.getSource() instanceof JDIThread) {
 					IJavaThread thread = (IJavaThread) debugEvent.getSource();
 					ISourceLocator sourceLocator = thread.getLaunch().getSourceLocator();
@@ -100,8 +107,9 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 						} else if (isStepInto) {
 							IJavaStackFrame invokingFrame = (IJavaStackFrame) frames[1];
 							IJavaStackFrame invokedFrame = (IJavaStackFrame) frames[0];
-							
-							if(!(invokingFrame.equals(auxInvokingFrame) && invokedFrame.equals(auxInvokedFrame))) {
+
+							if (!(invokingFrame.equals(auxInvokingFrame)
+									&& invokedFrame.equals(auxInvokedFrame))) {
 								createInvocation(sourceLocator, event, invokingFrame, invokedFrame);
 								auxInvokingFrame = invokingFrame;
 								auxInvokedFrame = invokedFrame;
@@ -113,9 +121,7 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
-
 	}
 
 	private void createInvocation(ISourceLocator sourceLocator, Event event, IJavaStackFrame invokingFrame,
@@ -155,7 +161,8 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 		return invokingMethod;
 	}
 
-	private IFile getTypeFile(DebugEvent debugEvent, IJavaThread thread, ISourceLocator sourceLocator) throws Exception {
+	private IFile getTypeFile(DebugEvent debugEvent, IJavaThread thread, ISourceLocator sourceLocator)
+			throws Exception {
 		try {
 			IStackFrame[] frames = thread.getStackFrames();
 
@@ -212,14 +219,13 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 		Method method = null;
 		String methodName = frame.getMethodName();
 
-
 		List<Method> methods = type.getMethods();
 		for (Method m : methods) {
-			if(getKey(frame, type, methodName).equals(m.getKey())) {
+			if (getKey(frame, type, methodName).equals(m.getKey())) {
 				method = m;
 				break;
 			}
-		}		
+		}
 
 		if (method == null) {
 			method = new Method();

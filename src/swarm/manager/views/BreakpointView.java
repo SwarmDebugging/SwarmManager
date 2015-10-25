@@ -79,6 +79,7 @@ public class BreakpointView extends ViewPart {
 		Label searchLabel = new Label(parent, SWT.NONE);
 		searchLabel.setText("Search ");
 		final Text searchText = new Text(parent, SWT.BORDER | SWT.SEARCH);
+		searchText.setText("*");
 		searchText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		
 		
@@ -93,7 +94,8 @@ public class BreakpointView extends ViewPart {
 					viewer.setInput(breakpoints.toArray());
 				} catch (Exception e) {
 					e.printStackTrace();
-				}			}
+				}			
+			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent event) {}
@@ -107,7 +109,6 @@ public class BreakpointView extends ViewPart {
 						Project project = new Project();
 						project.setName(projectCombo.getText());
 						List<Breakpoint> breakpoints = ElasticServer.getBreakpoints(project, searchText.getText().trim());
-						
 						viewer.setInput(breakpoints.toArray());
 						
 					} catch (Exception e) {
@@ -125,6 +126,31 @@ public class BreakpointView extends ViewPart {
 		hookDoubleClickAction();
 		contributeToActionBars();
 	}
+	
+	
+	private void createViewer(Composite parent) {
+		viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		createColumns(parent, viewer);
+		final Table table = viewer.getTable();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(false);
+
+		viewer.setContentProvider(new ArrayContentProvider());
+
+		getSite().setSelectionProvider(viewer);
+
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.horizontalSpan = 4;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.horizontalAlignment = GridData.FILL;
+		
+		viewer.getControl().setLayoutData(gridData);
+		
+
+	}
+	
 
 	private void populateComboProjects() {
 		if (developer != null) {
@@ -139,28 +165,11 @@ public class BreakpointView extends ViewPart {
 		}
 	}
 
-	private void createViewer(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		createColumns(parent, viewer);
-		final Table table = viewer.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
 
-		viewer.setContentProvider(new ArrayContentProvider());
-
-		getSite().setSelectionProvider(viewer);
-		GridData gridData = new GridData();
-		gridData.verticalAlignment = GridData.FILL;
-		gridData.horizontalSpan = 4;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.horizontalAlignment = GridData.FILL;
-		viewer.getControl().setLayoutData(gridData);
-	}
 
 	private void createColumns(final Composite parent, final TableViewer viewer) {
-		String[] titles = { "Developer", "Label", "Purpose", "Type", "Description", "Breakpoint Code"};
-		int[] bounds = { 100, 300, 250, 200, 500, 500};
+		String[] titles = { "Developer", "Breakpoint Code", "Label", "Purpose", "Type", "Description"};
+		int[] bounds = { 100,  500, 300, 250, 200, 500};
 
 		TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0], 0);
 		col.setLabelProvider(new ColumnLabelProvider() {
@@ -176,7 +185,7 @@ public class BreakpointView extends ViewPart {
 			@Override
 			public String getText(Object element) {
 				Breakpoint b = (Breakpoint) element;
-				return b.getSession().getLabel();
+				return b.getCode();
 			}
 		});
 
@@ -185,7 +194,7 @@ public class BreakpointView extends ViewPart {
 			@Override
 			public String getText(Object element) {
 				Breakpoint b = (Breakpoint) element;
-				return b.getSession().getPurpose();
+				return b.getSession().getLabel();
 			}
 		});
 		
@@ -194,7 +203,7 @@ public class BreakpointView extends ViewPart {
 			@Override
 			public String getText(Object element) {
 				Breakpoint b = (Breakpoint) element;
-				return b.getType().getFullName();
+				return b.getSession().getPurpose();
 			}
 		});
 		
@@ -203,7 +212,7 @@ public class BreakpointView extends ViewPart {
 			@Override
 			public String getText(Object element) {
 				Breakpoint b = (Breakpoint) element;
-				return b.getSession().getDescription();
+				return b.getType().getFullName();
 			}
 		});
 		
@@ -212,10 +221,9 @@ public class BreakpointView extends ViewPart {
 			@Override
 			public String getText(Object element) {
 				Breakpoint b = (Breakpoint) element;
-				return b.getCode();
+				return b.getSession().getDescription();
 			}
 		});
-		
 	}
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {

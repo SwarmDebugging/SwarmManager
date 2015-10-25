@@ -3,14 +3,13 @@ package swarm.core.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import swarm.core.domain.Method;
 import swarm.core.domain.Type;
 import swarm.core.server.ElasticServer;
-import swarm.core.server.Neo4JServer;
 import swarm.core.server.SwarmServer;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 public class MethodService {
 
@@ -33,15 +32,27 @@ public class MethodService {
 			method.setId(id);
 
 			ElasticServer.createMethod(method);
-			Neo4JServer.createMethod(method);
+			//Neo4JServer.createMethod(method);
 		}
 	}
 
 	public static void populate(JsonElement element, Method method) {
-		int typeId = element.getAsJsonObject().get("type").getAsJsonObject().get("id").getAsInt();
+		int methodId = element.getAsJsonObject().get("id").getAsInt();
+
+		String response = "";
+		try {
+			response = SwarmServer.getInstance().get(SwarmServer.METHODS + "/" + methodId + "/type");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
+		JsonParser parser = new JsonParser();
+		JsonElement typeElement = parser.parse(response);
+		int typeId = typeElement.getAsJsonObject().get("id").getAsInt();
 		Type type = TypeService.get(typeId);
 		
-		method.setId(element.getAsJsonObject().get("id").getAsInt());
+		method.setId(methodId);
 		method.setName(element.getAsJsonObject().get("name").getAsString());
 		method.setSignature(element.getAsJsonObject().get("signature").getAsString());
 		method.setKey(element.getAsJsonObject().get("key").getAsString());

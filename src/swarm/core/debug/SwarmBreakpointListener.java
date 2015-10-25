@@ -53,13 +53,19 @@ public final class SwarmBreakpointListener implements IBreakpointListener {
 			return;
 		}
 
-		try {
-			addBreakpoint(breakpoint);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			//MessageDialog.openWarning(shell, "Swarm Debugging", "Sorry, I can not create this breakpoint.");
-		}
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					addBreakpoint(breakpoint);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+			
+		thread.start();
 
 	}
 

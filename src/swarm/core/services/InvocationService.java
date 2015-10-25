@@ -5,16 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import swarm.core.domain.Invocation;
 import swarm.core.domain.Method;
 import swarm.core.domain.Session;
 import swarm.core.server.ElasticServer;
-import swarm.core.server.Neo4JServer;
 import swarm.core.server.SwarmServer;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 public class InvocationService {
 
@@ -38,9 +37,9 @@ public class InvocationService {
 			
 			ElasticServer.createInvocation(invocation);
 			
-			if(!Neo4JServer.containsInvocation(invocation)) {
-				Neo4JServer.createInvocation(invocation);
-			}
+//			if(!Neo4JServer.containsInvocation(invocation)) {
+//				Neo4JServer.createInvocation(invocation);
+//			}
 		}		
 	}
 	

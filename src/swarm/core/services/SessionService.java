@@ -214,7 +214,7 @@ public class SessionService {
 
 		String response;
 		try {
-			response = server.get("session/startingMethods?sessionId=" + session.getId());
+			response = server.get("sessions/startingMethods?sessionId=" + session.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -242,7 +242,7 @@ public class SessionService {
 
 		String response;
 		try {
-			response = server.get("session/endingMethods?sessionId=" + session.getId());
+			response = server.get("sessions/endingMethods?sessionId=" + session.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

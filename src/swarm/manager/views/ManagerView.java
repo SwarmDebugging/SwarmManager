@@ -171,20 +171,18 @@ public class ManagerView extends ViewPart {
 					try {
 						Session s = (Session) obj;
 
-						IViewPart view = WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
-						DynamicMethodCallGraph browser = (DynamicMethodCallGraph) view;
-						String url = SwarmServer.getInstance().getServerUrl() + "graphSession?idSession="+s.getId()
-								+"&addType=false&layout=dagre";
-						browser.setUrl(url);
-						browser.setProject(s.getProject());
+						DynamicMethodCallGraph graphBrowser  = (DynamicMethodCallGraph) WorkbenchUtil.findView(DynamicMethodCallGraph.ID);
+						graphBrowser  = (DynamicMethodCallGraph) WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
+						String graphUrl = SwarmServer.getInstance().getServerUrl() + "graph.html?sessionId="+s.getId();
+						graphBrowser.setUrl(graphUrl);
+						graphBrowser.setProject(s.getProject());
+						WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
 						
-
-						view = WorkbenchUtil.showView(SequencePathView.ID);
-						SequencePathView path = (SequencePathView) view;
-						url = SwarmServer.getInstance().getServerUrl() + 
-								"sequencePath?rankDir=LR&sessionId="+s.getId();
-						path.setUrl(url);
-						path.setProject(s.getProject());
+						SequencePathView sequenceBrowser = (SequencePathView) WorkbenchUtil.findView(SequencePathView.ID);
+						String sequenceUrl = SwarmServer.getInstance().getServerUrl() + "stack.html?sessionId="+s.getId();
+						sequenceBrowser.setUrl(sequenceUrl);
+						sequenceBrowser.setProject(s.getProject());
+						WorkbenchUtil.showView(SequencePathView.ID);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

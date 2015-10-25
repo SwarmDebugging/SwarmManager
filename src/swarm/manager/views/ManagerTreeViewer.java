@@ -19,11 +19,9 @@ import swarm.core.services.SessionService;
 
 public class ManagerTreeViewer extends TreeViewer {
 
-	ContentProvider content = new ContentProvider();
-
 	public ManagerTreeViewer(Composite parent) {
 		super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		setContentProvider(content);
+		setContentProvider(new ContentProvider());
 		setLabelProvider(new ViewLabelProvider());
 		setSorter(new ViewerSorter());
 	}

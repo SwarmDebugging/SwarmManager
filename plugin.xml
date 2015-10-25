@@ -8,27 +8,31 @@
             id="SoftwarePathfinder">
       </category>
       <view
-            name="Swarm Debugging Manager"
-            icon="icons/project.gif"
+            allowMultiple="false"
             category="SoftwarePathfinder"
             class="swarm.manager.views.ManagerView"
-            id="swarm.manager.views.ManagerView">
+            icon="icons/project.gif"
+            id="swarm.manager.views.ManagerView"
+            name="Swarm Debugging Manager">
       </view>
       <view
-            name="Method Call Graph"
-            icon="icons/project.gif"
+            allowMultiple="false"
             category="SoftwarePathfinder"
             class="swarm.manager.views.DynamicMethodCallGraph"
-            id="swarm.manager.views.DynamicMethodCallGraph">
+            icon="icons/project.gif"
+            id="swarm.manager.views.DynamicMethodCallGraph"
+            name="Method Call Graph">
       </view>      
       <view
+            allowMultiple="false"
             category="SoftwarePathfinder"
-            name="Sequence Stack Diagram"
-            icon="icons/project.gif"
             class="swarm.manager.views.SequencePathView"
-            id="swarm.manager.views.SequencePathView">
+            icon="icons/project.gif"
+            id="swarm.manager.views.SequencePathView"
+            name="Sequence Stack Diagram">
       </view>
       <view
+            allowMultiple="false"
             category="SoftwarePathfinder"
             class="swarm.manager.views.StartingMethodView"
             icon="icons/project.gif"
@@ -36,6 +40,7 @@
             name="Starting Method Search">
       </view>
       <view
+            allowMultiple="false"
             category="SoftwarePathfinder"
             class="swarm.manager.views.EndingMethodView"
             icon="icons/project.gif"
@@ -43,6 +48,7 @@
             name="Ending Method Search">
       </view>
       <view
+            allowMultiple="false"
             category="SoftwarePathfinder"
             class="swarm.manager.views.BreakpointView"
             icon="icons/project.gif"
@@ -50,6 +56,7 @@
             name="Breakpoint Search">
       </view>
       <view
+            allowMultiple="false"
             category="SoftwarePathfinder"
             class="swarm.manager.views.DashboardBrowser"
             icon="icons/project.gif"
@@ -57,6 +64,7 @@
             name="Swarm Dashboard">
       </view>
       <view
+            allowMultiple="false"
             category="SoftwarePathfinder"
             class="swarm.manager.views.Neo4JBrowser"
             icon="icons/project.gif"

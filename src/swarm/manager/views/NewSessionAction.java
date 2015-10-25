@@ -4,7 +4,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
 import swarm.core.debug.DebugTracer;
@@ -66,21 +65,17 @@ public class NewSessionAction extends Action {
 					
 				viewer.addSession(session);
 				
-				IViewPart view = WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
-				DynamicMethodCallGraph browser = (DynamicMethodCallGraph) view;
-				String url = SwarmServer.getInstance().getServerUrl() + 
-							"graphSession?idSession="+session.getId() +
-						     "&addType=false&layout=dagre&rankDir=TB";
-				browser.setUrl(url);
-				browser.setProject(project);
+				DynamicMethodCallGraph graphBrowser  = (DynamicMethodCallGraph) WorkbenchUtil.findView(DynamicMethodCallGraph.ID);
+				String graphUrl = SwarmServer.getInstance().getServerUrl() + "graph.html?sessionId="+session.getId();
+				graphBrowser.setUrl(graphUrl);
+				graphBrowser.setProject(session.getProject());
+				WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
 				
-				view = WorkbenchUtil.showView(SequencePathView.ID);
-				SequencePathView path = (SequencePathView) view;
-				url = SwarmServer.getInstance().getServerUrl() + 
-							"sequencePath?rankDir=LR&sessionId="+session.getId();
-				path.setUrl(url);
-				path.setProject(project);
-
+				SequencePathView sequenceBrowser = (SequencePathView) WorkbenchUtil.findView(SequencePathView.ID);
+				String sequenceUrl = SwarmServer.getInstance().getServerUrl() + "stack.html?sessionId="+session.getId();
+				sequenceBrowser.setUrl(sequenceUrl);
+				sequenceBrowser.setProject(session.getProject());
+				
 				//Opening Debug Perspective
 				PlatformUI.getWorkbench().showPerspective("org.eclipse.debug.ui.DebugPerspective", 
 												PlatformUI.getWorkbench().getActiveWorkbenchWindow());

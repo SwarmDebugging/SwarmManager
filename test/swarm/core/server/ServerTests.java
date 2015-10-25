@@ -55,7 +55,7 @@ public class ServerTests {
 			e.printStackTrace();
 		}		
 		
-		System.out.println(ElasticServer.search(query, content));
+		System.out.println(ElasticServer.getInstance().search(query, content));
 		
 	}
 	

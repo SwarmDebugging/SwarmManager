@@ -5,11 +5,12 @@ import java.util.List;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import swarm.core.domain.Developer;
 import swarm.core.domain.Project;
 import swarm.core.server.SwarmServer;
-import swarm.core.domain.Developer;
 
 public class DeveloperService {
 
@@ -112,8 +113,8 @@ public class DeveloperService {
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
 
-		if (element.isJsonArray()) {
-			JsonArray jsonTypes = (JsonArray) element.getAsJsonArray();
+		if (element.isJsonObject()) {
+			JsonArray jsonTypes = ((JsonObject) element).get("_embedded").getAsJsonObject().get("developers").getAsJsonArray(); 
 			for (JsonElement typeElement : jsonTypes) {
 				Developer developer = new Developer();
 				populate(typeElement, developer);

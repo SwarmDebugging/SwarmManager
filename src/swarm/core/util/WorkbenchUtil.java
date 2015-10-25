@@ -79,6 +79,15 @@ public class WorkbenchUtil {
 	public static IViewPart showView(String id) throws Exception {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
 	}
+	
+	public static IViewPart findView(String id) throws Exception {
+		IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(id);
+		if(part == null) {
+			part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
+		}
+		return part;
+	}
+
 
 	public static IJavaProject getProjectByName(String name) throws Exception {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();

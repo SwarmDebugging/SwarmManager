@@ -19,6 +19,12 @@ import java.util.Set;
 
 import org.elasticsearch.common.Base64;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
+
 import swarm.core.domain.Breakpoint;
 import swarm.core.domain.Developer;
 import swarm.core.domain.Event;
@@ -29,14 +35,9 @@ import swarm.core.domain.Session;
 import swarm.core.domain.Type;
 import swarm.core.services.MethodService;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonWriter;
-
 public class ElasticServer {
 
-	private static enum SearchMode { FUZZY, MATCH, WILDCARD };
+	private static enum SearchMode { BASIC, FUZZY, MATCH, WILDCARD };
 	
 	public static final String SESSIONS = "sessions";
 	public static final String DEVELOPERS = "developers";
@@ -53,14 +54,18 @@ public class ElasticServer {
 	private static final String DELETE = "DELETE";
 
 	private static String DEFAULT_URL = "http://localhost:9200/";
-	//private static String DEFAULT_URL = "https://swarm-9484876022.us-east-1.bonsai.io/";
 	private static ElasticServer server;
 
 	private String serverUrl;
 
 	public static ElasticServer getInstance() {
 		if (server == null) {
-			server = new ElasticServer(DEFAULT_URL);
+			String url = System.getenv("ELASTIC_SERVER_URL");
+			if(url.isEmpty()) {
+				url = DEFAULT_URL;
+			}
+				
+			server = getInstance(url);
 		}
 		return server;
 	}
@@ -84,6 +89,11 @@ public class ElasticServer {
 	public String getServerUrl() {
 		return serverUrl;
 	}
+	
+	public String search(String query, String content) throws Exception {
+		URL url = new URL(serverUrl + query);
+		return request(url, content, "GET");
+	}	
 
 	public String get(String message) throws Exception {
 		URL url = new URL(serverUrl + message);
@@ -139,6 +149,12 @@ public class ElasticServer {
 		urlConnection.setConnectTimeout(10000);
 		urlConnection.setReadTimeout(10000);
 		urlConnection.setRequestProperty("Content-Type", "application/json");
+		
+		// Bonsai user
+		String userpass = "p8dasvnuxn:7tm40gzfnp";
+		String basicAuth = "Basic " + new String(Base64.encodeBytes(userpass.getBytes()));
+		urlConnection.setRequestProperty("Authorization", basicAuth);
+		
 		urlConnection.connect();
 
 		OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
@@ -281,11 +297,6 @@ public class ElasticServer {
 		System.out.println(response);		
 	}
 
-	public static String search(String query, String content) throws Exception {
-		URL url = new URL(getInstance().getServerUrl() + query);
-		return getInstance().request(url, content, "GET");
-	}
-	
 	public static List<Method> getStartingMethods(Project project) throws Exception {
 		return getStartingMethods(project, "");
 	}
@@ -325,7 +336,7 @@ public class ElasticServer {
 		content = writer.toString();
 		w.close();
 		
-		String response = ElasticServer.search(query, content);
+		String response = ElasticServer.getInstance().search(query, content);
 
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -379,26 +390,34 @@ public class ElasticServer {
 		
 		String query = "swarm/breakpoint/_search";
 		
-		runSearch(project, search, breakpoints, query, SearchMode.FUZZY);
-		runSearch(project, search, breakpoints, query, SearchMode.MATCH);
-		runSearch(project, search, breakpoints, query, SearchMode.WILDCARD);
+		runSearch(project, search, breakpoints, query, SearchMode.BASIC);
 		
+		if(search.length() > 0) {
+			runSearch(project, search, breakpoints, query, SearchMode.FUZZY);
+			runSearch(project, search, breakpoints, query, SearchMode.MATCH);
+			runSearch(project, search, breakpoints, query, SearchMode.WILDCARD);
+		}
+
 		return breakpoints;
 	}
 
 	private static void runSearch(Project project, String search, List<Breakpoint> breakpoints, String query, SearchMode searchMode)
 			throws IOException, Exception {
-		String content;
-		StringWriter writer = new StringWriter();
-		JsonWriter w = new JsonWriter(writer);
-		w.setHtmlSafe(true);
-		w.setLenient(true);
-		w.beginObject().name("query").beginObject()
-				.name("filtered").beginObject();
 
-		w.name("query").beginObject();
-		
-		if(search.length() > 0) {
+		String response;
+		if(searchMode == SearchMode.BASIC) {
+			response = ElasticServer.getInstance().search(query+"?q=project:" + project.getName() + "&q=" + search , "");
+		} else {
+			String content;
+			StringWriter writer = new StringWriter();
+			JsonWriter w = new JsonWriter(writer);
+			w.setHtmlSafe(true);
+			w.setLenient(true);
+			w.beginObject().name("query").beginObject()
+					.name("filtered").beginObject();
+
+			w.name("query").beginObject();
+			
 			switch (searchMode) {
 			case FUZZY:
 				{
@@ -416,6 +435,8 @@ public class ElasticServer {
 							.beginArray()
 								.value("label")
 								.value("description")
+	     						.value("purpose")
+	     						.value("developer")
 							.endArray()
 					.endObject();
 				}
@@ -430,35 +451,34 @@ public class ElasticServer {
 			default:
 				break;
 			}
+				
+
+			w.endObject();
+
+			//Project filter
+//			w.name("filter").beginObject().name("bool")
+//								.beginObject().name("must")
+//									.beginArray()
+//										.beginObject().name("term")
+//											.beginObject().name("project")
+//												.value(project.getName())
+//											.endObject()
+//										.endObject()
+//									.endArray()
+//								.endObject()
+//							.endObject();
 			
-		} else {
-			w.name("match_all").beginObject()
-			.endObject();
+			w.endObject().endObject().endObject();
+				
+			w.flush();
+			content = writer.toString();
+			w.close();
+			
+			System.out.println(ElasticServer.getInstance().getServerUrl() + query + "?q=" + search);
+			System.out.println(content);
+			
+			response = ElasticServer.getInstance().search(query, content);
 		}
-
-		w.endObject();
-
-		w.name("filter").beginObject()
-					.name("bool").beginObject()
-						.name("must").beginArray()
-							.beginObject()
-								.name("term")
-									.beginObject()
-										.name("project").value(project.getName())
-									.endObject()
-								.endObject()
-						.endArray().endObject()
-					.endObject()
-				.endObject()
-			.endObject().endObject();
-			
-		w.flush();
-		content = writer.toString();
-		w.close();
-		
-		System.out.println(content);
-		
-		String response = ElasticServer.search(query, content);
 
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -467,35 +487,47 @@ public class ElasticServer {
 					.getAsJsonObject().get("hits").getAsJsonArray();
 		
 		for (JsonElement breakpointElement : breakpointArray) {
-			Breakpoint breakpoint = new Breakpoint();
-			breakpoint.setId(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("breakpointId").getAsInt());
-			breakpoint.setLineNumber(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("lineNumber").getAsInt());
-			breakpoint.setCharStart(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("charStart").getAsInt());
-			breakpoint.setCharEnd(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("charEnd").getAsInt());
-			breakpoint.setCode(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("breakpointCode").getAsString());
-			
-			Type type = new Type();
-			type.setName(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("typeName").getAsString());
-			type.setFullName(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("typeFullName").getAsString());
-			type.setSource(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("typeSource").getAsString());
-			breakpoint.setType(type);
+			try {
+				
+				JsonObject source = breakpointElement.getAsJsonObject().get("_source").getAsJsonObject();
+				
+				if (source != null && (source.has("project") && source.has("breakpointId"))) {
+					String projectName = source.getAsJsonObject().get("project").getAsString();
+					if(projectName.equals(project.getName())) {
+						Breakpoint breakpoint = new Breakpoint();
+						breakpoint.setId(source.getAsJsonObject().get("breakpointId").getAsInt());
+						breakpoint.setLineNumber(source.getAsJsonObject().get("lineNumber").getAsInt());
+						breakpoint.setCharStart(source.getAsJsonObject().get("charStart").getAsInt());
+						breakpoint.setCharEnd(source.getAsJsonObject().get("charEnd").getAsInt());
+						breakpoint.setCode(source.getAsJsonObject().get("breakpointCode").getAsString());
+						
+						Type type = new Type();
+						type.setName(source.getAsJsonObject().get("typeName").getAsString());
+						type.setFullName(source.getAsJsonObject().get("typeFullName").getAsString());
+						type.setSource(source.getAsJsonObject().get("typeSource").getAsString());
+						breakpoint.setType(type);
+		
+						Session session = new Session();
+						session.setId(source.getAsJsonObject().get("sessionId").getAsInt());
+						session.setDescription(source.getAsJsonObject().get("description").getAsString());
+						session.setLabel(source.getAsJsonObject().get("label").getAsString());
+						session.setPurpose(source.getAsJsonObject().get("purpose").getAsString());
+						
+						Developer developer = new Developer();
+						developer.setName(source.getAsJsonObject().get("developer").getAsString());
+						session.setDeveloper(developer);
+						
+						breakpoint.setSession(session);
+						
+						if(!breakpoints.contains(breakpoint)) {
+							breakpoints.add(breakpoint);
+						}
+				}
 
-			Session session = new Session();
-			session.setId(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("sessionId").getAsInt());
-			session.setDescription(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("description").getAsString());
-			session.setLabel(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("label").getAsString());
-			session.setPurpose(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("purpose").getAsString());
-			
-			Developer developer = new Developer();
-			developer.setName(breakpointElement.getAsJsonObject().get("_source").getAsJsonObject().get("developer").getAsString());
-			session.setDeveloper(developer);
-			
-			breakpoint.setSession(session);
-			
-			
-			
-			if(!breakpoints.contains(breakpoint)) {
-				breakpoints.add(breakpoint);
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
 			}
 		}
 	}

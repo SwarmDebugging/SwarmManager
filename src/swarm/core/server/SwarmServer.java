@@ -29,7 +29,12 @@ public class SwarmServer {
 
 	public static SwarmServer getInstance() {
 		if (server == null) {
-			server = new SwarmServer(DEFAULT_URL);
+			String url = System.getenv("SWARM_SERVER_URL");
+			if(url.isEmpty()) {
+				url = DEFAULT_URL;
+			}
+				
+			server = getInstance(url);
 		}
 		return server;
 	}
