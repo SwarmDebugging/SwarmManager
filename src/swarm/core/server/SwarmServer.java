@@ -30,7 +30,7 @@ public class SwarmServer {
 	public static SwarmServer getInstance() {
 		if (server == null) {
 			String url = System.getenv("SWARM_SERVER_URL");
-			if(url.isEmpty()) {
+			if(url == null) {
 				url = DEFAULT_URL;
 			}
 				

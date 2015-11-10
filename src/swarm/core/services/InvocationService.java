@@ -24,7 +24,6 @@ public class InvocationService {
 		data.put("invoked", invocation.getInvoked().getURI());
 		data.put("invoking", invocation.getInvoking().getURI());
 		data.put("session", invocation.getSession().getURI());
-		data.put("event", invocation.getEvent().getURI());
 
 		String json = JSON.build(data);
 		String response = server.create(SwarmServer.INVOCATIONS, json);

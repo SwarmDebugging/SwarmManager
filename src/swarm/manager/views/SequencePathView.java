@@ -45,18 +45,25 @@ public class SequencePathView extends ViewPart {
 				//browser.refresh();
 				Object jsvar = browser.evaluate("return tappedMethod;");
 				if(jsvar != null) {
-					int methodId = new Integer(jsvar.toString().substring(4));
+					
+					int methodId = new Integer(jsvar.toString().substring(jsvar.toString().lastIndexOf("M")+1));
 					Method method = MethodService.get(methodId);
 
 					try {
 						IType javaType = project.getJavaProject().findType(method.getType().getFullName());
 						
+						boolean found = false;
 						IMethod[] methods = javaType.getMethods();
 						for (IMethod iMethod : methods) {
 							//TODO Issue: problem whether more than one signature
 							if(iMethod.getElementName().equals(method.getName())) {
+								found = true;
 								WorkbenchUtil.openEditor(iMethod);
 							}
+						}
+						
+						if(methods.length > 0 && !found) {
+							WorkbenchUtil.openEditor(methods[0]);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();

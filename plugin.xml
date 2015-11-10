@@ -72,4 +72,17 @@
             name="Neo4J Browser">
       </view>                     
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="swarm.manager.WorkbenchPreferencePage"
+            id="swarm.manager.WorkbenchPreferencePage"
+            name="Swarm Debugging">
+      </page>
+      <page
+            class="swarmmanager.preferences.SamplePreferencePage"
+            id="swarmmanager.preferences.SamplePreferencePage"
+            name="Sample Preferences">
+      </page>
+   </extension>
 </plugin>

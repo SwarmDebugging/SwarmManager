@@ -61,7 +61,7 @@ public class ElasticServer {
 	public static ElasticServer getInstance() {
 		if (server == null) {
 			String url = System.getenv("ELASTIC_SERVER_URL");
-			if(url.isEmpty()) {
+			if(url == null) {
 				url = DEFAULT_URL;
 			}
 				

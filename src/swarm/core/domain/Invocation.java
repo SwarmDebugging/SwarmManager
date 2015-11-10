@@ -9,8 +9,6 @@ public class Invocation extends Domain {
 	
 	private Method invoking;
 	private Method invoked;
-
-	private Event event;
 	
 	public Session getSession() {
 		return session;
@@ -47,14 +45,6 @@ public class Invocation extends Domain {
 	}
 
 
-	public Event getEvent() {
-		return this.event;
-	}
-	
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-	
 	public boolean equals(Object object) {
 		if(object != null && object instanceof Invocation) {
 			Invocation i = (Invocation) object;
