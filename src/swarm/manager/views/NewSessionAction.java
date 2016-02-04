@@ -1,16 +1,14 @@
 package swarm.manager.views;
 
+import java.util.Date;
+
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 import swarm.core.debug.DebugTracer;
 import swarm.core.domain.Project;
 import swarm.core.domain.Session;
-import swarm.core.server.SwarmServer;
-import swarm.core.util.WorkbenchUtil;
 
 public class NewSessionAction extends Action {
 
@@ -45,17 +43,18 @@ public class NewSessionAction extends Action {
 					return;
 				}
 					
-				NewSessionDialog dialog = new NewSessionDialog(viewer.getSite().getShell());
-				
-				if(dialog.open() != Dialog.OK) {
-					return;
-				}
+//				NewSessionDialog dialog = new NewSessionDialog(viewer.getSite().getShell());
+//				
+//				if(dialog.open() != Dialog.OK) {
+//					return;
+//				}
 				
 				session.setProject(project);
 				session.setDeveloper(viewer.developer);
-				session.setLabel(dialog.getLabel());
-				session.setDescription(dialog.getDescription());
-				session.setPurpose(dialog.getPurpose());
+				session.setLabel("Session " + new Date());
+//				session.setLabel(dialog.getLabel());
+//				session.setDescription(dialog.getDescription());
+//				session.setPurpose(dialog.getPurpose());
 				
 				session.create();
 				
@@ -65,20 +64,20 @@ public class NewSessionAction extends Action {
 					
 				viewer.addSession(session);
 				
-				DynamicMethodCallGraph graphBrowser  = (DynamicMethodCallGraph) WorkbenchUtil.findView(DynamicMethodCallGraph.ID);
-				String graphUrl = SwarmServer.getInstance().getServerUrl() + "graph.html?sessionId="+session.getId();
-				graphBrowser.setUrl(graphUrl);
-				graphBrowser.setProject(session.getProject());
-				WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
-				
-				SequencePathView sequenceBrowser = (SequencePathView) WorkbenchUtil.findView(SequencePathView.ID);
-				String sequenceUrl = SwarmServer.getInstance().getServerUrl() + "stack.html?sessionId="+session.getId();
-				sequenceBrowser.setUrl(sequenceUrl);
-				sequenceBrowser.setProject(session.getProject());
-				
-				//Opening Debug Perspective
-				PlatformUI.getWorkbench().showPerspective("org.eclipse.debug.ui.DebugPerspective", 
-												PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+//				DynamicMethodCallGraph graphBrowser  = (DynamicMethodCallGraph) WorkbenchUtil.findView(DynamicMethodCallGraph.ID);
+//				String graphUrl = SwarmServer.getInstance().getServerUrl() + "graph.html?sessionId="+session.getId();
+//				graphBrowser.setUrl(graphUrl);
+//				graphBrowser.setProject(session.getProject());
+//				WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
+//				
+//				SequencePathView sequenceBrowser = (SequencePathView) WorkbenchUtil.findView(SequencePathView.ID);
+//				String sequenceUrl = SwarmServer.getInstance().getServerUrl() + "stack.html?sessionId="+session.getId();
+//				sequenceBrowser.setUrl(sequenceUrl);
+//				sequenceBrowser.setProject(session.getProject());
+//				
+//				//Opening Debug Perspective
+//				PlatformUI.getWorkbench().showPerspective("org.eclipse.debug.ui.DebugPerspective", 
+//												PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 			} catch (Exception e) {
 				e.printStackTrace();
 				MessageDialog.openWarning(shell, "Swarm Debugging", "Creating a session failed.");

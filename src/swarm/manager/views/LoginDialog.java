@@ -45,7 +45,7 @@ public class LoginDialog extends TitleAreaDialog {
 		container.setLayout(layout);
 
 		createUserName(container);
-		createPassword(container);
+		//createPassword(container);
 
 		return area;
 	}
@@ -84,9 +84,9 @@ public class LoginDialog extends TitleAreaDialog {
 
 	private boolean saveInput() {
 		userName = userNameText.getText();
-		password = passwordText.getText();
+		//password = passwordText.getText();
 		
-		if(userName != null && userName.length() > 0 && password != null && password.length() > 0) {
+		if(userName != null && userName.length() > 0 ) { //&& password != null && password.length() > 0) {
 
 			developer = Developer.login(userName);
 			

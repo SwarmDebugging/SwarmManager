@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.views">
+   <extension point="org.eclipse.ui.views">
       <category
-            name="Software Pathfinder"
+            name="%category.name"
             id="SoftwarePathfinder">
       </category>
       <view
@@ -13,7 +12,7 @@
             class="swarm.manager.views.ManagerView"
             icon="icons/project.gif"
             id="swarm.manager.views.ManagerView"
-            name="Swarm Debugging Manager">
+            name="%view.name">
       </view>
       <view
             allowMultiple="false"
@@ -21,7 +20,7 @@
             class="swarm.manager.views.DynamicMethodCallGraph"
             icon="icons/project.gif"
             id="swarm.manager.views.DynamicMethodCallGraph"
-            name="Method Call Graph">
+            name="%view.name.0">
       </view>      
       <view
             allowMultiple="false"
@@ -29,7 +28,7 @@
             class="swarm.manager.views.SequencePathView"
             icon="icons/project.gif"
             id="swarm.manager.views.SequencePathView"
-            name="Sequence Stack Diagram">
+            name="%view.name.1">
       </view>
       <view
             allowMultiple="false"
@@ -37,7 +36,7 @@
             class="swarm.manager.views.StartingMethodView"
             icon="icons/project.gif"
             id="swarm.manager.views.StartingMethodView"
-            name="Starting Method Search">
+            name="%view.name.2">
       </view>
       <view
             allowMultiple="false"
@@ -45,7 +44,7 @@
             class="swarm.manager.views.EndingMethodView"
             icon="icons/project.gif"
             id="swarm.manager.views.EndingMethodView"
-            name="Ending Method Search">
+            name="%view.name.3">
       </view>
       <view
             allowMultiple="false"
@@ -53,7 +52,7 @@
             class="swarm.manager.views.BreakpointView"
             icon="icons/project.gif"
             id="swarm.manager.views.BreakpointView"
-            name="Breakpoint Search">
+            name="%view.name.4">
       </view>
       <view
             allowMultiple="false"
@@ -61,7 +60,7 @@
             class="swarm.manager.views.DashboardBrowser"
             icon="icons/project.gif"
             id="swarm.manager.views.DashboardBrowser"
-            name="Swarm Dashboard">
+            name="%view.name.5">
       </view>
       <view
             allowMultiple="false"
@@ -69,20 +68,24 @@
             class="swarm.manager.views.Neo4JBrowser"
             icon="icons/project.gif"
             id="swarm.manager.views.Neo4JBrowser"
-            name="Neo4J Browser">
+            name="%view.name.6">
       </view>                     
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
+   
+   <extension point="org.eclipse.ui.preferencePages">
       <page
-            class="swarm.manager.WorkbenchPreferencePage"
-            id="swarm.manager.WorkbenchPreferencePage"
-            name="Swarm Debugging">
+            category="org.eclipse.mylyn.context.ui.preferences"
+            class="swarm.manager.SwarmPreferencePage"
+            id="swarm.manager.swarmpreferencepage"
+            name="%SwarmDebuggingPreferencePage.name">
+            <keywordReference id="swarm.manager.ui.keywords"/>
       </page>
-      <page
-            class="swarmmanager.preferences.SamplePreferencePage"
-            id="swarmmanager.preferences.SamplePreferencePage"
-            name="Sample Preferences">
-      </page>
+   </extension>
+   
+     <extension
+   		point="org.eclipse.ui.keywords">
+      <keyword
+            label="%keywords.label"
+            id="swarm.manager.ui.keywords"/>
    </extension>
 </plugin>

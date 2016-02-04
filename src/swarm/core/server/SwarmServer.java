@@ -6,6 +6,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SwarmServer {
 
@@ -26,12 +29,22 @@ public class SwarmServer {
 	private static SwarmServer server;
 
 	private String serverUrl;
-
+	
+	private static final Logger tracer = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	
 	public static SwarmServer getInstance() {
 		if (server == null) {
 			String url = System.getenv("SWARM_SERVER_URL");
 			if(url == null) {
 				url = DEFAULT_URL;
+			}
+			
+			try {
+				tracer.addHandler(new FileHandler("SwarmDebuggingTracer.log", true));
+				tracer.setLevel(Level.ALL);
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 				
 			server = getInstance(url);
@@ -67,6 +80,9 @@ public class SwarmServer {
 
 	public String create(String message, String request) throws Exception {
 		URL url = new URL(serverUrl + message);
+		
+		tracer.log(Level.ALL, request);
+		
 		return request(url, request, POST);
 	}
 

@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -218,23 +217,23 @@ public class ManagerView extends ViewPart {
 			newProjectAction.setDeveloper(developer);
 			
 			
-			try {
-				IViewPart view = WorkbenchUtil.showView(StartingMethodView.ID);
-				StartingMethodView startingView = (StartingMethodView) view;
-				startingView.setDeveloper(developer);
-				
-				view = WorkbenchUtil.showView(EndingMethodView.ID);
-				EndingMethodView endingView = (EndingMethodView) view;
-				endingView.setDeveloper(developer);				
-
-				view = WorkbenchUtil.showView(BreakpointView.ID);
-				BreakpointView breakpointView = (BreakpointView) view;
-				breakpointView.setDeveloper(developer);
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				IViewPart view = WorkbenchUtil.findView(BreakpointView.ID);
+//				BreakpointView breakpointView = (BreakpointView) view;
+//				breakpointView.setDeveloper(developer);
+//				
+//				view = WorkbenchUtil.findView(StartingMethodView.ID);
+//				StartingMethodView startingView = (StartingMethodView) view;
+//				startingView.setDeveloper(developer);
+//				
+//				view = WorkbenchUtil.findView(EndingMethodView.ID);
+//				EndingMethodView endingView = (EndingMethodView) view;
+//				endingView.setDeveloper(developer);				
+//
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	}
 
