@@ -46,6 +46,14 @@ public final class SwarmBreakpointListener implements IBreakpointListener {
 		System.out.println("Static BreakpointManager -> BreakpointAdded Event");
 		IProject actualProject = breakpoint.getMarker().getResource().getProject();
 
+	    if (session.getProject().getJavaProject() == null) {
+	    	MessageDialog.openWarning(shell, "Swarm Debugging", "Sorry, I can not add this breakpoint. You are debugging " + 
+	    							  actualProject.getName()	+ 
+									  ", but the active Swarm project is " + session.getProject().getName());
+	    	return;
+		}
+
+				
 		if (!actualProject.equals(session.getProject().getJavaProject().getProject())) {
 			MessageDialog.openWarning(shell, "Swarm Debugging", "Sorry, I can not add this breakpoint. You are debugging " + 
 										actualProject.getName()	+ 

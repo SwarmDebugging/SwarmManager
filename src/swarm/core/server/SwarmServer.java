@@ -25,7 +25,7 @@ public class SwarmServer {
 	private static final String POST = "POST";
 	private static final String PUT = "PUT";
 
-	private static String DEFAULT_URL = "http://localhost:8080/";
+	private static String DEFAULT_URL = "http://server.swarmdebugging.org";
 	private static SwarmServer server;
 
 	private String serverUrl;

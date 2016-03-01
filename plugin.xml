@@ -4,11 +4,11 @@
    <extension point="org.eclipse.ui.views">
       <category
             name="%category.name"
-            id="SoftwarePathfinder">
+            id="SwarmDebug">
       </category>
       <view
             allowMultiple="false"
-            category="SoftwarePathfinder"
+            category="SwarmDebug"
             class="swarm.manager.views.ManagerView"
             icon="icons/project.gif"
             id="swarm.manager.views.ManagerView"
@@ -16,7 +16,7 @@
       </view>
       <view
             allowMultiple="false"
-            category="SoftwarePathfinder"
+            category="SwarmDebug"
             class="swarm.manager.views.DynamicMethodCallGraph"
             icon="icons/project.gif"
             id="swarm.manager.views.DynamicMethodCallGraph"
@@ -24,7 +24,7 @@
       </view>      
       <view
             allowMultiple="false"
-            category="SoftwarePathfinder"
+            category="SwarmDebug"
             class="swarm.manager.views.SequencePathView"
             icon="icons/project.gif"
             id="swarm.manager.views.SequencePathView"
@@ -32,7 +32,7 @@
       </view>
       <view
             allowMultiple="false"
-            category="SoftwarePathfinder"
+            category="SwarmDebug"
             class="swarm.manager.views.StartingMethodView"
             icon="icons/project.gif"
             id="swarm.manager.views.StartingMethodView"
@@ -40,7 +40,7 @@
       </view>
       <view
             allowMultiple="false"
-            category="SoftwarePathfinder"
+            category="SwarmDebug"
             class="swarm.manager.views.EndingMethodView"
             icon="icons/project.gif"
             id="swarm.manager.views.EndingMethodView"
@@ -48,7 +48,7 @@
       </view>
       <view
             allowMultiple="false"
-            category="SoftwarePathfinder"
+            category="SwarmDebug"
             class="swarm.manager.views.BreakpointView"
             icon="icons/project.gif"
             id="swarm.manager.views.BreakpointView"
@@ -56,7 +56,7 @@
       </view>
       <view
             allowMultiple="false"
-            category="SoftwarePathfinder"
+            category="SwarmDebug"
             class="swarm.manager.views.DashboardBrowser"
             icon="icons/project.gif"
             id="swarm.manager.views.DashboardBrowser"
@@ -64,7 +64,7 @@
       </view>
       <view
             allowMultiple="false"
-            category="SoftwarePathfinder"
+            category="SwarmDebug"
             class="swarm.manager.views.Neo4JBrowser"
             icon="icons/project.gif"
             id="swarm.manager.views.Neo4JBrowser"

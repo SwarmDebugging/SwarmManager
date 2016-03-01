@@ -64,7 +64,8 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 				return;
 			} else if (process != null && process.isTerminated()) {
 				DebugPlugin.getDefault().removeDebugEventListener(this);
-				stopAction.run();
+				//TODO Evaluate if it is good stay connected after a session terminate  
+				//stopAction.run();
 				return;
 			} else if (debugEvent.getDetail() == DebugEvent.STEP_INTO) {
 				isStepInto = true;

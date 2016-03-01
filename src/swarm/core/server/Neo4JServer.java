@@ -24,7 +24,7 @@ public class Neo4JServer {
 	private static final String PUT = "PUT";
 	private static final String DELETE = "DELETE";
 
-	private static String DEFAULT_URL = "http://localhost:7474/db/data/";
+	private final static String DEFAULT_URL = "http://localhost:7474/db/data/";
 	private static Neo4JServer server;
 
 	private String serverUrl;

@@ -53,7 +53,7 @@ public class ElasticServer {
 	private static final String PUT = "PUT";
 	private static final String DELETE = "DELETE";
 
-	private static String DEFAULT_URL = "http://localhost:9200/";
+	private static String DEFAULT_URL = "http://elastic.swarmdebugging.org";
 	private static ElasticServer server;
 
 	private String serverUrl;
