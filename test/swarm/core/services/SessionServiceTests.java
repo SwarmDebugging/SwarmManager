@@ -16,7 +16,7 @@ public class SessionServiceTests {
 	public void sessionLifeCicle() throws Exception {
 		Developer d = DeveloperService.login("Petrillo");
 		Session s = new Session();
-		s.setProject(d.getProjects().get(0));
+		s.setTask(d.getTasks().get(0));
 		s.setLabel("Creating session ");
 		s.setPurpose("Fix a bug");
 		s.setDescription("A big sentence that represent a test description.");

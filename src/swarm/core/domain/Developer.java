@@ -35,8 +35,8 @@ public class Developer extends Domain {
 		return id + ": " + name;
 	}
 	
-	public List<Project> getProjects() {
-		return DeveloperService.getProjects(this);
+	public List<Task> getTasks() {
+		return DeveloperService.getTasks(this);
 	}
 	
 	public String getURI() {

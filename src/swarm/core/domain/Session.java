@@ -1,5 +1,7 @@
 package swarm.core.domain;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -16,8 +18,10 @@ public class Session extends Domain {
 	private String purpose = "";
 	private String description = "";
 
-	private Project project;
+	private Task task;
 	private Developer developer;
+	
+	private Project project;
 
 	public Session() {
 		this.started = null;
@@ -71,6 +75,14 @@ public class Session extends Domain {
 	}
 
 
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
+	}
+
 	public Project getProject() {
 		return project;
 	}
@@ -114,7 +126,8 @@ public class Session extends Domain {
 	}
 	
 	public String toString() {
-		return this.label;
+		DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		return project.getName() + " " + df.format(started);
 	}
 	
 	public boolean equals(Object object) {

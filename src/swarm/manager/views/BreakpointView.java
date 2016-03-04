@@ -43,8 +43,9 @@ import org.eclipse.ui.part.ViewPart;
 import swarm.core.domain.Breakpoint;
 import swarm.core.domain.Developer;
 import swarm.core.domain.Project;
+import swarm.core.domain.Task;
 import swarm.core.server.ElasticServer;
-import swarm.core.services.ProjectService;
+import swarm.core.services.TaskService;
 import swarm.core.util.WorkbenchUtil;
 
 public class BreakpointView extends ViewPart {
@@ -72,7 +73,7 @@ public class BreakpointView extends ViewPart {
 		Label projectLabel = new Label(parent, SWT.NONE);
 		projectLabel.setText("Project ");
 		projectCombo = new Combo(parent, SWT.BORDER | SWT.SEARCH | SWT.READ_ONLY);
-		populateComboProjects();
+		populateTaskCombo();
 
 		projectCombo.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
@@ -152,13 +153,13 @@ public class BreakpointView extends ViewPart {
 	}
 	
 
-	private void populateComboProjects() {
+	private void populateTaskCombo() {
 		if (developer != null) {
 			//List<Project> projects = developer.getProjects();
-			List<Project> projects = ProjectService.getProjects();
-			String[] projectNames = new String[projects.size()];
+			List<Task> tasks = TaskService.getAll();
+			String[] projectNames = new String[tasks.size()];
 			for (int i = 0; i < projectNames.length; i++) {
-				projectNames[i] = projects.get(i).getName();
+				projectNames[i] = tasks.get(i).getTitle();
 			}
 
 			projectCombo.setItems(projectNames);
@@ -334,6 +335,6 @@ public class BreakpointView extends ViewPart {
 
 	public void setDeveloper(Developer developer) {
 		this.developer = developer;
-		populateComboProjects();
+		populateTaskCombo();
 	}
 }

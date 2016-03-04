@@ -9,19 +9,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import swarm.core.domain.Breakpoint;
 import swarm.core.domain.Developer;
 import swarm.core.domain.Event;
 import swarm.core.domain.Method;
 import swarm.core.domain.Project;
 import swarm.core.domain.Session;
+import swarm.core.domain.Task;
 import swarm.core.domain.Type;
 import swarm.core.server.SwarmServer;
-import swarm.core.services.DeveloperService;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 public class SessionService {
 
@@ -31,8 +31,9 @@ public class SessionService {
 		SwarmServer server = SwarmServer.getInstance();
 		
 		Map<String, Object> data = new HashMap<>();
-		data.put("project", session.getProject().getURI());
+		data.put("project", session.getProject());
 		data.put("developer", session.getDeveloper().getURI());
+		data.put("task", session.getTask().getURI());
 		data.put("purpose", session.getPurpose());
 		data.put("description", session.getDescription());
 		data.put("label", session.getLabel());
@@ -49,14 +50,14 @@ public class SessionService {
 	}
 	
 	
-	public static List<Session> getSessions(Project project, Developer developer) {
+	public static List<Session> getSessions(Task task, Developer developer) {
 		List<Session> sessions = new ArrayList<Session>();
 		
 		SwarmServer server = SwarmServer.getInstance();
 
 		String response;
 		try {
-			response = server.get("sessions/find?projectId=" + project.getId()+"&developerId="+developer.getId());
+			response = server.get("sessions/find?taskId=" +task.getId()+"&developerId="+developer.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -69,7 +70,7 @@ public class SessionService {
 			JsonArray array = element.getAsJsonArray();
 			for (JsonElement sessionElement : array) {
 				Session session = new Session();
-				session.setProject(project);
+				session.setTask(task);
 				session.setDeveloper(developer);
 				SessionService.populate(sessionElement, session);
 				sessions.add(session);
@@ -79,6 +80,68 @@ public class SessionService {
  		return sessions;
 	}
 	
+	public static List<Session> getSessions(Task task) {
+		List<Session> sessions = new ArrayList<Session>();
+		
+		SwarmServer server = SwarmServer.getInstance();
+
+		String response;
+		try {
+			response = server.get("sessions/find?taskId=" +task.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(response);
+
+		if (element.isJsonArray()) {
+			JsonArray array = element.getAsJsonArray();
+			for (JsonElement sessionElement : array) {
+				Session session = new Session();
+				session.setTask(task);
+				
+				//TODO Populate developer
+				//session.setDeveloper(developer);
+
+				SessionService.populate(sessionElement, session);
+				sessions.add(session);
+			}
+		}
+		
+ 		return sessions;
+	}
+
+	
+	
+	public static List<Session> getAll() {
+		List<Session> sessions = new ArrayList<Session>();
+		
+		SwarmServer server = SwarmServer.getInstance();
+
+		String response;
+		try {
+			response = server.get("sessions/all");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(response);
+
+		if (element.isJsonArray()) {
+			JsonArray array = element.getAsJsonArray();
+			for (JsonElement sessionElement : array) {
+				Session session = new Session();
+				SessionService.populate(sessionElement, session);
+				sessions.add(session);
+			}
+		}
+		
+ 		return sessions;
+	}
 	public static void start(Session session) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
 		
@@ -88,7 +151,7 @@ public class SessionService {
 		session.setStarted(now);
 		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
 		
-		data.put("project", session.getProject().getURI());
+		data.put("project", session.getProject());
 		data.put("developer", session.getDeveloper().getURI());
 		data.put("purpose", session.getPurpose());
 		data.put("description", session.getDescription());
@@ -116,7 +179,7 @@ public class SessionService {
 		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
 
 		data.put("finished", df.format(now));
-		data.put("project", session.getProject().getURI());
+		data.put("project", session.getProject());
 		data.put("developer", session.getDeveloper().getURI());
 		data.put("purpose", session.getPurpose());
 		data.put("description", session.getDescription());
@@ -139,6 +202,12 @@ public class SessionService {
 	public static void populate(JsonElement element, Session session) {
 		session.setId(element.getAsJsonObject().get("id").getAsInt());
 		session.setLabel(element.getAsJsonObject().get("label").getAsString());
+		
+		//TODO Populate task and developer
+//		session.setTask(task);
+//		session.setDeveloper(developer);
+		
+		
 		
 		if(element.getAsJsonObject().has("description") && !element.getAsJsonObject().get("description").isJsonNull()) {
 			session.setDescription(element.getAsJsonObject().get("description").getAsString());
@@ -164,8 +233,9 @@ public class SessionService {
 			}
 			
 			if(session.getProject() == null && !element.getAsJsonObject().get("project").isJsonNull()) {
-				int id = element.getAsJsonObject().get("project").getAsInt();
-				Project p = ProjectService.get(id);
+				String projectName = element.getAsJsonObject().get("project").getAsString();
+				Project p = new Project();
+				p.setName(projectName);
 				session.setProject(p);
 			}
 

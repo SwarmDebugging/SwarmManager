@@ -26,6 +26,7 @@ import swarm.core.debug.DebugTracer;
 import swarm.core.domain.Developer;
 import swarm.core.domain.Project;
 import swarm.core.domain.Session;
+import swarm.core.domain.Task;
 import swarm.core.server.SwarmServer;
 import swarm.core.util.WorkbenchUtil;
 
@@ -42,7 +43,7 @@ public class ManagerView extends ViewPart {
 	protected LoginAction loginAction;
 	protected NewSessionAction newSessionAction;
 	protected StopSessionAction stopSessionAction;
-	protected NewProjectAction newProjectAction;
+	protected NewTaskAction newProjectAction;
 
 	private Action doubleClickAction;
 
@@ -81,7 +82,7 @@ public class ManagerView extends ViewPart {
 				if(event.getSelection() instanceof TreeSelection) {
 					Object item = ((TreeSelection) event.getSelection()).getFirstElement();
 					
-					if(item instanceof Project) {
+					if(item instanceof Task) {
 						newSessionAction.setEnabled(true);
 						return;
 					}
@@ -156,7 +157,7 @@ public class ManagerView extends ViewPart {
 
 	private void makeActions() {
 		loginAction = new LoginAction(developer, this);
-		newProjectAction = new NewProjectAction(this);
+		newProjectAction = new NewTaskAction(this);
 		
 		newSessionAction = new NewSessionAction(this);
 		stopSessionAction = new StopSessionAction(this);
@@ -166,7 +167,18 @@ public class ManagerView extends ViewPart {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				
-				if(obj instanceof Session) {
+				if(obj instanceof Task) {
+					TaskView browser;
+					try {
+						browser = (TaskView) WorkbenchUtil.findView(TaskView.ID);
+						browser.setTask((Task) obj);
+						WorkbenchUtil.showView(TaskView.ID);					
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				else if(obj instanceof Session) {
 					try {
 						Session s = (Session) obj;
 

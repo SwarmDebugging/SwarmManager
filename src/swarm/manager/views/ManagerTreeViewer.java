@@ -13,9 +13,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 import swarm.core.domain.Developer;
-import swarm.core.domain.Project;
 import swarm.core.domain.Session;
+import swarm.core.domain.Task;
 import swarm.core.services.SessionService;
+import swarm.core.services.TaskService;
 
 public class ManagerTreeViewer extends TreeViewer {
 
@@ -30,7 +31,7 @@ public class ManagerTreeViewer extends TreeViewer {
 
 		private final Object[] EMPTY_ARRAY = new Object[] {};
 		private Developer developer;
-		private List<Project> projects = new ArrayList<Project>();
+		private List<Task> tasks = new ArrayList<Task>();
 
 		@Override
 		public void dispose() {
@@ -44,21 +45,20 @@ public class ManagerTreeViewer extends TreeViewer {
 		public Object[] getElements(Object inputElement) {
 			if(inputElement instanceof Developer) {
 				developer = (Developer) inputElement;
-				projects.clear();
-				projects.addAll(developer.getProjects());
-			} else if(inputElement instanceof Project) {
-				projects.add((Project) inputElement);
+				tasks.clear();
+				tasks.addAll(TaskService.getAll());
+			} else if(inputElement instanceof Task) {
+				tasks.add((Task) inputElement);
 			}
 
-			return projects.toArray();
+			return tasks.toArray();
 		}
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof Project) {
-				//Populate project sessions
-				Project p = (Project) parentElement;
-				return SessionService.getSessions(p, developer).toArray();
+			if (parentElement instanceof Task) {
+				Task task = (Task) parentElement;
+				return SessionService.getSessions(task, developer).toArray();
 			} else {
 				return EMPTY_ARRAY;
 			}
@@ -74,9 +74,9 @@ public class ManagerTreeViewer extends TreeViewer {
 
 		@Override
 		public boolean hasChildren(Object element) {
-			if (element instanceof Project) {
-				Project p = (Project) element;
-				return SessionService.getSessions(p, developer).size() > 0;
+			if (element instanceof Task) {
+				Task task  = (Task) element;
+				return SessionService.getSessions(task, developer).size() > 0;
 			}
 			return false;
 		}
@@ -89,7 +89,7 @@ public class ManagerTreeViewer extends TreeViewer {
 		}
 
 		public Image getImage(Object item) {
-			if (item instanceof Project) {
+			if (item instanceof Task) {
 				return Images.PROJECT;
 			} else if (item instanceof Session) {
 				return Images.SESSION;

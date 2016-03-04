@@ -44,8 +44,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import swarm.core.domain.Developer;
 import swarm.core.domain.Method;
-import swarm.core.domain.Project;
-import swarm.core.services.ProjectService;
+import swarm.core.domain.Task;
+import swarm.core.services.TaskService;
 import swarm.core.util.WorkbenchUtil;
 
 public class EndingMethodView extends ViewPart {
@@ -59,7 +59,7 @@ public class EndingMethodView extends ViewPart {
 
 	Developer developer;
 
-	private Combo projectCombo;
+	private Combo taskCombo;
 
 	class NameSorter extends ViewerSorter {
 	}
@@ -73,10 +73,10 @@ public class EndingMethodView extends ViewPart {
 
 		Label projectLabel = new Label(parent, SWT.NONE);
 		projectLabel.setText("Project ");
-		projectCombo = new Combo(parent, SWT.BORDER | SWT.SEARCH | SWT.READ_ONLY);
-		populateComboProjects();
+		taskCombo = new Combo(parent, SWT.BORDER | SWT.SEARCH | SWT.READ_ONLY);
+		populateTaskCombo();
 
-		projectCombo.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		taskCombo.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
 		Label searchLabel = new Label(parent, SWT.NONE);
 		searchLabel.setText("Search ");
@@ -84,18 +84,19 @@ public class EndingMethodView extends ViewPart {
 		searchText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		
 		
-		projectCombo.addSelectionListener(new SelectionListener() {
+		taskCombo.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					Project project = (Project) projectCombo.getData(projectCombo.getText());
-					List<Method> methods = getMethods(searchText, project);
+					Task task = (Task) taskCombo.getData(taskCombo.getText());
+					List<Method> methods = getMethods(searchText, task);	
 					
 					viewer.setInput(methods.toArray());
 				} catch (Exception e) {
 					e.printStackTrace();
-				}			}
+				}			
+			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent event) {}
@@ -106,8 +107,8 @@ public class EndingMethodView extends ViewPart {
 			public void keyTraversed(TraverseEvent event) {
 				if(event.detail == SWT.TRAVERSE_RETURN) {
 					try {
-						Project project = (Project) projectCombo.getData(projectCombo.getText());
-						List<Method> methods = getMethods(searchText, project);						
+						Task task = (Task) taskCombo.getData(taskCombo.getText());
+						List<Method> methods = getMethods(searchText, task);						
 						
 						viewer.setInput(methods.toArray());
 						
@@ -127,16 +128,14 @@ public class EndingMethodView extends ViewPart {
 		contributeToActionBars();
 	}
 
-	private void populateComboProjects() {
-		if (developer != null) {
-			List<Project> projects = developer.getProjects();
-			String[] projectNames = new String[projects.size()];
-			for (int i = 0; i < projectNames.length; i++) {
-				projectCombo.setData(projects.get(i).getName(), projects.get(i));
-				projectNames[i] = projects.get(i).getName();
+	private void populateTaskCombo() {
+			List<Task> tasks = TaskService.getAll();
+			String[] taskNames = new String[tasks.size()];
+			for (int i = 0; i < taskNames.length; i++) {
+				taskCombo.setData(tasks.get(i).getTitle(), tasks.get(i));
+				taskNames[i] = tasks.get(i).getTitle();
 			}
-			projectCombo.setItems(projectNames	);
-		}
+			taskCombo.setItems(taskNames);
 	}
 
 	private void createViewer(Composite parent) {
@@ -268,7 +267,7 @@ public class EndingMethodView extends ViewPart {
 					Method method = (Method) obj;
 					IJavaProject javaProject;
 					try {
-						javaProject = WorkbenchUtil.getProjectByName(projectCombo.getText());
+						javaProject = WorkbenchUtil.getProjectByName(taskCombo.getText());
 						IType javaType = javaProject.findType(method.getType().getFullName());
 						
 						IMethod[] methods = javaType.getMethods();
@@ -305,15 +304,15 @@ public class EndingMethodView extends ViewPart {
 
 	public void setDeveloper(Developer developer) {
 		this.developer = developer;
-		populateComboProjects();
+		populateTaskCombo();
 	}
 
-	private List<Method> getMethods(final Text searchText, Project project) {
+	private List<Method> getMethods(final Text searchText, Task task) {
 		List<Method> methods = new ArrayList<Method>();
 		if(searchText.getText().trim().isEmpty()) {
-			methods.addAll(ProjectService.getEndingMethods(project));
+			methods.addAll(TaskService.getEndingMethods(task));
 		} else {
-			for(Method method : ProjectService.getEndingMethods(project)) {
+			for(Method method : TaskService.getEndingMethods(task)) {
 				if(method.toString().toLowerCase().contains(searchText.getText().toLowerCase())) {
 					methods.add(method);
 				}

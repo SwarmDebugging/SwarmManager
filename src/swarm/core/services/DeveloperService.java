@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import swarm.core.domain.Developer;
-import swarm.core.domain.Project;
+import swarm.core.domain.Task;
 import swarm.core.server.SwarmServer;
 
 public class DeveloperService {
@@ -47,13 +47,13 @@ public class DeveloperService {
 		developer.setName(element.getAsJsonObject().get("name").getAsString());
 	}
 
-	public static List<Project> getProjects(Developer developer) {
-		List<Project> projects = new ArrayList<Project>();
+	public static List<Task> getTasks(Developer developer) {
+		List<Task> tasks = new ArrayList<Task>();
 		SwarmServer server = SwarmServer.getInstance();
 
 		String response;
 		try {
-			response = server.get("/projects/getByDeveloperId?developerId=" + developer.getId());
+			response = server.get("/tasks/getByDeveloperId?developerId=" + developer.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -65,11 +65,11 @@ public class DeveloperService {
 		if (element.isJsonArray()) {
 			JsonArray jsonTypes = (JsonArray) element.getAsJsonArray();
 			for (JsonElement typeElement : jsonTypes) {
-				Project project = new Project();
-				ProjectService.populate(typeElement, project);
-				projects.add(project);
+				Task task = new Task();
+				TaskService.populate(typeElement, task);
+				tasks.add(task);
 			}
-			return projects;
+			return tasks;
 		} else {
 	 		return null;
 		}

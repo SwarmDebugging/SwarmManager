@@ -7,7 +7,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -28,7 +27,7 @@ import swarm.manager.views.StopSessionAction;
 public final class SwarmDebugEventListener implements IDebugEventSetListener {
 
 	private Session session;
-	private StopSessionAction stopAction;
+	//private StopSessionAction stopAction;
 
 	//private Invocation lastInvocation;
 	private boolean isStepInto = false;
@@ -42,7 +41,7 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 	
 	public SwarmDebugEventListener(Session session, StopSessionAction stopAction) {
 		this.session = session;
-		this.stopAction = stopAction;
+		//this.stopAction = stopAction;
 		this.now = new Date();
 	}
 
@@ -63,8 +62,8 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 				}
 				return;
 			} else if (process != null && process.isTerminated()) {
-				DebugPlugin.getDefault().removeDebugEventListener(this);
 				//TODO Evaluate if it is good stay connected after a session terminate  
+				//DebugPlugin.getDefault().removeDebugEventListener(this);
 				//stopAction.run();
 				return;
 			} else if (debugEvent.getDetail() == DebugEvent.STEP_INTO) {

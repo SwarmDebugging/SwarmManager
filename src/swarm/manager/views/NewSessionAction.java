@@ -2,6 +2,7 @@ package swarm.manager.views;
 
 import java.util.Date;
 
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -9,6 +10,8 @@ import org.eclipse.swt.widgets.Shell;
 import swarm.core.debug.DebugTracer;
 import swarm.core.domain.Project;
 import swarm.core.domain.Session;
+import swarm.core.domain.Task;
+import swarm.core.util.WorkbenchUtil;
 
 public class NewSessionAction extends Action {
 
@@ -28,18 +31,18 @@ public class NewSessionAction extends Action {
 		
 		this.shell = viewer.getShell();
 	}
-
+	
 	public void run() {
 		if (!session.isActive()) {
 			try {
-				Project project = null;
+				Task task = null;
 
 				Object selection = viewer.getSelectedItem();
 				
-				if(selection instanceof Project) {
-					project = (Project) selection;
+				if(selection instanceof Task) {
+					task = (Task) selection;
 				} else {
-					MessageDialog.openWarning(shell, "Swarm Debugging", "Select a Swarm project to start a new session.");
+					MessageDialog.openWarning(shell, "Swarm Debugging", "Select a task to start a new session.");
 					return;
 				}
 					
@@ -49,9 +52,26 @@ public class NewSessionAction extends Action {
 //					return;
 //				}
 				
-				session.setProject(project);
+				
+
+				
+				IJavaProject javaProject = getProject();
+				
+				if(javaProject == null) {
+					MessageDialog.openWarning(shell, "Swarm Debugging", "Please, select a Java Project in your Workspace.");
+					return;
+				}
+				
+				
+				
+				Project project = new Project();
+				project.setName(javaProject.getProject().getName());
+				project.setJavaProject(javaProject);
+				
+				session.setTask(task);
 				session.setDeveloper(viewer.developer);
 				session.setLabel("Session " + new Date());
+				session.setProject(project);
 //				session.setLabel(dialog.getLabel());
 //				session.setDescription(dialog.getDescription());
 //				session.setPurpose(dialog.getPurpose());
@@ -84,6 +104,15 @@ public class NewSessionAction extends Action {
 			}
 		} else {
 			MessageDialog.openWarning(shell, "Swarm Debugging", "Please, stop the active session " + session.toString() + " before creating a new session");
+		}
+	}
+	
+	private IJavaProject getProject() throws Exception {
+		Object project = WorkbenchUtil.getSelectedProject();
+		if (project != null && project instanceof IJavaProject) {
+			return (IJavaProject) project;
+		} else {
+			return null;
 		}
 	}
 }

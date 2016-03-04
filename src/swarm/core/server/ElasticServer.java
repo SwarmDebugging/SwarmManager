@@ -243,6 +243,8 @@ public class ElasticServer {
 				.startObject()
 					.field("invocationId", invocation.getId())
 					.field("sessionId", invocation.getSession().getId())
+                    .field("taskId", invocation.getSession().getTask().getId())
+                    .field("taskTitle", invocation.getSession().getTask().getTitle())
 					.field("description", invocation.getSession().getDescription())
 					.field("developer", invocation.getSession().getDeveloper().getName())
 					.field("project", invocation.getSession().getProject().getName())
@@ -264,6 +266,8 @@ public class ElasticServer {
 		String source = jsonBuilder()
 				.startObject()
                     .field("methodId", method.getId())
+                    .field("taskId", method.getType().getSession().getTask().getId())
+                    .field("taskTitle", method.getType().getSession().getTask().getTitle())
                     .field("sessionId", method.getType().getSession().getId())
                     .field("description", method.getType().getSession().getDescription())
                     .field("developer", method.getType().getSession().getDeveloper().getName())
@@ -283,6 +287,8 @@ public class ElasticServer {
 				.startObject()
                     .field("typeId", type.getId())
                     .field("sessionId", type.getSession().getId())
+                    .field("taskId", type.getSession().getTask().getId())
+                    .field("taskTitle", type.getSession().getTask().getTitle())
                     .field("description", type.getSession().getDescription())
                     .field("developer", type.getSession().getDeveloper().getName())
                     .field("project", type.getSession().getProject().getName())
@@ -531,5 +537,4 @@ public class ElasticServer {
 			}
 		}
 	}
-
 }

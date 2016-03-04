@@ -33,6 +33,14 @@
       <view
             allowMultiple="false"
             category="SwarmDebug"
+            class="swarm.manager.views.TaskView"
+            icon="icons/project.gif"
+            id="swarm.manager.views.TaskView"
+            name="%view.name.7">
+      </view>      
+      <view
+            allowMultiple="false"
+            category="SwarmDebug"
             class="swarm.manager.views.StartingMethodView"
             icon="icons/project.gif"
             id="swarm.manager.views.StartingMethodView"
