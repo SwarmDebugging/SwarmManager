@@ -22,7 +22,6 @@ public class TaskService {
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("title", task.getTitle());
-		data.put("description", task.getDescription());
 		data.put("url", task.getUrl());
 
 		String json = JSON.build(data);
@@ -35,14 +34,13 @@ public class TaskService {
 			task.setId(id);
 
 			// ElasticServer.createTask(task);
-			// Neo4JServer.createTask(method);
+			// Neo4JServer.createTask(method); 	
 		}
 	}
 
 	public static void populate(JsonElement element, Task task) {
 		task.setId(element.getAsJsonObject().get("id").getAsInt());
 		task.setTitle(element.getAsJsonObject().get("title").getAsString());
-		task.setDescription(element.getAsJsonObject().get("description").getAsString());
 		task.setUrl(element.getAsJsonObject().get("url").getAsString());
 	}
 

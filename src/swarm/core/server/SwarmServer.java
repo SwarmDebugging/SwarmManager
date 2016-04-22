@@ -73,10 +73,17 @@ public class SwarmServer {
 		return serverUrl;
 	}
 
-	public String get(String message) throws Exception {
-		URL url = new URL(serverUrl + message);
+	public String get(String message, boolean hasHost) throws Exception {
+		if(!hasHost) {
+			message = serverUrl + message; 
+		}
+		URL url = new URL(message);
 		System.out.println(url);
 		return response(url);
+	}
+	
+	public String get(String message) throws Exception {
+		return get(message,false);
 	}
 
 	public String create(String message, String request) throws Exception {

@@ -2,6 +2,7 @@ package swarm.core.domain;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class Session extends Domain {
 	private Project project;
 
 	public Session() {
-		this.started = null;
+		this.started = Calendar.getInstance().getTime();
 		this.finished = null;
 	}
 	
@@ -127,11 +128,11 @@ public class Session extends Domain {
 	
 	public String toString() {
 		DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		return project.getName() + " " + df.format(started);
+		return df.format(started);
 	}
 	
 	public boolean equals(Object object) {
-		if(object instanceof Session) {
+		if(object != null && object instanceof Session) {
 			return id == ((Session) object).getId();
 		}
 		return false;

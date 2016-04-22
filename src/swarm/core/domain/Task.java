@@ -6,8 +6,6 @@ public class Task extends Domain {
 
 	String title;
 	
-	String description;
-	
 	String url;
 
 	public String getTitle() {
@@ -18,14 +16,6 @@ public class Task extends Domain {
 		this.title = title;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
 	public String getUrl() {
 		return url;
 	}

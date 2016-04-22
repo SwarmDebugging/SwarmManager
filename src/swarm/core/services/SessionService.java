@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdt.core.IJavaProject;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -22,6 +24,7 @@ import swarm.core.domain.Session;
 import swarm.core.domain.Task;
 import swarm.core.domain.Type;
 import swarm.core.server.SwarmServer;
+import swarm.core.util.WorkbenchUtil;
 
 public class SessionService {
 
@@ -102,9 +105,6 @@ public class SessionService {
 				Session session = new Session();
 				session.setTask(task);
 				
-				//TODO Populate developer
-				//session.setDeveloper(developer);
-
 				SessionService.populate(sessionElement, session);
 				sessions.add(session);
 			}
@@ -203,12 +203,6 @@ public class SessionService {
 		session.setId(element.getAsJsonObject().get("id").getAsInt());
 		session.setLabel(element.getAsJsonObject().get("label").getAsString());
 		
-		//TODO Populate task and developer
-//		session.setTask(task);
-//		session.setDeveloper(developer);
-		
-		
-		
 		if(element.getAsJsonObject().has("description") && !element.getAsJsonObject().get("description").isJsonNull()) {
 			session.setDescription(element.getAsJsonObject().get("description").getAsString());
 		}
@@ -236,6 +230,8 @@ public class SessionService {
 				String projectName = element.getAsJsonObject().get("project").getAsString();
 				Project p = new Project();
 				p.setName(projectName);
+				IJavaProject javaProject = WorkbenchUtil.getProjectByName(projectName);
+				p.setJavaProject(javaProject);
 				session.setProject(p);
 			}
 

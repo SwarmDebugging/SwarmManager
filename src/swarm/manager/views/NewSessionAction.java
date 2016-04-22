@@ -15,7 +15,6 @@ import swarm.core.util.WorkbenchUtil;
 
 public class NewSessionAction extends Action {
 
-	private Session session;
 	private ManagerView viewer;
 	
 	private Shell shell;
@@ -26,14 +25,13 @@ public class NewSessionAction extends Action {
 		setEnabled(false);
 		setImageDescriptor(Images.SESSION_DESCRIPTOR);
 
-		this.session = viewer.actualSession;
 		this.viewer = viewer;
 		
 		this.shell = viewer.getShell();
 	}
 	
 	public void run() {
-		if (!session.isActive()) {
+		if (viewer.activeSession == null || (viewer.activeSession != null && !viewer.activeSession.isActive())) {
 			try {
 				Task task = null;
 
@@ -68,6 +66,7 @@ public class NewSessionAction extends Action {
 				project.setName(javaProject.getProject().getName());
 				project.setJavaProject(javaProject);
 				
+				Session session = new Session();
 				session.setTask(task);
 				session.setDeveloper(viewer.developer);
 				session.setLabel("Session " + new Date());
@@ -81,7 +80,7 @@ public class NewSessionAction extends Action {
 				viewer.debugTracer = new DebugTracer(session, viewer);
 				viewer.debugTracer.activeDebugTracer();
 				viewer.stopSessionAction.setEnabled(true);
-					
+				viewer.activeSession = session;
 				viewer.addSession(session);
 				
 //				DynamicMethodCallGraph graphBrowser  = (DynamicMethodCallGraph) WorkbenchUtil.findView(DynamicMethodCallGraph.ID);
@@ -103,7 +102,7 @@ public class NewSessionAction extends Action {
 				MessageDialog.openWarning(shell, "Swarm Debugging", "Creating a session failed.");
 			}
 		} else {
-			MessageDialog.openWarning(shell, "Swarm Debugging", "Please, stop the active session " + session.toString() + " before creating a new session");
+			MessageDialog.openWarning(shell, "Swarm Debugging", "Please, stop the active session " + viewer.activeSession.toString() + " before creating a new session");
 		}
 	}
 	

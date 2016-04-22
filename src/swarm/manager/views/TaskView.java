@@ -23,7 +23,6 @@ public class TaskView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		browser = new Browser(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		
-
 		browser.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent event) {
@@ -56,11 +55,16 @@ public class TaskView extends ViewPart {
 	
 	public void setTask(Task task) {
 		this.task = task;
+		this.setPartName(task.getTitle());
 		browser.setUrl(task.getUrl());
 		browser.refresh();
 	}
 
 	public void setFocus() {
 		browser.setFocus();
+	}
+	
+	public void refresh() {
+		browser.refresh();
 	}
 }

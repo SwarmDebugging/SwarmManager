@@ -48,7 +48,7 @@ public class ManagerView extends ViewPart {
 	private Action doubleClickAction;
 
 	protected Developer developer;
-	protected Session actualSession;
+	protected Session activeSession;
 	
 	protected DebugTracer debugTracer;
 	
@@ -65,8 +65,7 @@ public class ManagerView extends ViewPart {
 		this.parent = parent;
 		this.shell = parent.getShell();
 		
-		actualSession = new Session();
-		developer = new Developer();
+		ManagerView me = this;
 		
 		viewer = new ManagerTreeViewer(parent);
 		drillDownAdapter = new DrillDownAdapter(viewer);
@@ -82,23 +81,21 @@ public class ManagerView extends ViewPart {
 				if(event.getSelection() instanceof TreeSelection) {
 					Object item = ((TreeSelection) event.getSelection()).getFirstElement();
 					
-					if(item instanceof Task) {
-						newSessionAction.setEnabled(true);
-						return;
-					}
+					newSessionAction.setEnabled(item instanceof Task);
 					
 					if(item instanceof Session) {
 						Session s = (Session) item;
-
-						if(actualSession == null || (!actualSession.isActive())) {
-							actualSession = s; 
-							stopSessionAction.setEnabled(false);
-							return;
-						}
 						
-						if(actualSession.equals(s)) {
+						if(s.equals(activeSession)) {
 							stopSessionAction.setEnabled(s.isActive());
-						}
+							return;
+						} else if(s.isActive() && debugTracer == null) {
+							activeSession = s;
+							activeSession.setDeveloper(developer);
+							debugTracer = new DebugTracer(activeSession, me	);
+							debugTracer.activeDebugTracer();
+							stopSessionAction.setEnabled(true);
+						} 
 					}
 				}
 			}
@@ -170,13 +167,24 @@ public class ManagerView extends ViewPart {
 				if(obj instanceof Task) {
 					TaskView browser;
 					try {
-						browser = (TaskView) WorkbenchUtil.findView(TaskView.ID);
+						browser = (TaskView) WorkbenchUtil.showView(TaskView.ID);
 						browser.setTask((Task) obj);
-						WorkbenchUtil.showView(TaskView.ID);					
+						browser.refresh();
+						
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
+					TaskBreakpointView breakpoint;
+					try {
+						breakpoint = (TaskBreakpointView) WorkbenchUtil.showView(TaskBreakpointView.ID);
+						breakpoint.setTask((Task) obj);
+						breakpoint.refresh();
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
 				}
 				else if(obj instanceof Session) {
 					try {
@@ -185,15 +193,17 @@ public class ManagerView extends ViewPart {
 						DynamicMethodCallGraph graphBrowser  = (DynamicMethodCallGraph) WorkbenchUtil.findView(DynamicMethodCallGraph.ID);
 						graphBrowser  = (DynamicMethodCallGraph) WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
 						String graphUrl = SwarmServer.getInstance().getServerUrl() + "graph.html?sessionId="+s.getId();
+						System.out.println(graphUrl);
 						graphBrowser.setUrl(graphUrl);
 						graphBrowser.setProject(s.getProject());
 						WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
 						
-						SequencePathView sequenceBrowser = (SequencePathView) WorkbenchUtil.findView(SequencePathView.ID);
-						String sequenceUrl = SwarmServer.getInstance().getServerUrl() + "stack.html?sessionId="+s.getId();
-						sequenceBrowser.setUrl(sequenceUrl);
-						sequenceBrowser.setProject(s.getProject());
-						WorkbenchUtil.showView(SequencePathView.ID);
+//						SequencePathView sequenceBrowser = (SequencePathView) WorkbenchUtil.findView(SequencePathView.ID);
+//						String sequenceUrl = SwarmServer.getInstance().getServerUrl() + "stack.html?sessionId="+s.getId();
+//						System.out.println(graphUrl);
+//						sequenceBrowser.setUrl(sequenceUrl);
+//						sequenceBrowser.setProject(s.getProject());
+//						WorkbenchUtil.showView(SequencePathView.ID);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

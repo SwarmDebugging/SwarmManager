@@ -77,7 +77,23 @@
             icon="icons/project.gif"
             id="swarm.manager.views.Neo4JBrowser"
             name="%view.name.6">
-      </view>                     
+      </view>
+      <view
+            allowMultiple="true"
+            category="SwarmDebug"
+            class="swarm.manager.views.ProductGraph"
+            icon="icons/project.gif"
+            id="swarm.manager.views.ProductGraph"
+            name="%view.name.8">
+      </view>      
+      <view
+            allowMultiple="true"
+            category="SwarmDebug"
+            class="swarm.manager.views.TaskBreakpointView"
+            icon="icons/project.gif"
+            id="swarm.manager.views.TaskBreakpointView"
+            name="%view.name.9">
+      </view>
    </extension>
    
    <extension point="org.eclipse.ui.preferencePages">

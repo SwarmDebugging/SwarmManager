@@ -67,7 +67,7 @@ public class ManagerTreeViewer extends TreeViewer {
 		@Override
 		public Object getParent(Object element) {
 			if(element instanceof Session) {
-				((Session) element).getProject();
+				((Session) element).getTask();
 			}
 			return null;
 		}

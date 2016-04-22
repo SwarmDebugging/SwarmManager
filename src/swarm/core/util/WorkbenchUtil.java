@@ -72,8 +72,8 @@ public class WorkbenchUtil {
 		return project;
 	}
 
-	public static void openEditor(IJavaElement element) throws Exception {
-			JavaUI.openInEditor(element, true, true);
+	public static  IEditorPart openEditor(IJavaElement element) throws Exception {
+			return JavaUI.openInEditor(element, true, true);
 	}
 
 	public static IViewPart showView(String id) throws Exception {
@@ -84,7 +84,8 @@ public class WorkbenchUtil {
 		IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(id);
 		if(part == null) {
 			part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
-		}
+		} 
+		
 		return part;
 	}
 
