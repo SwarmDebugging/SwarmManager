@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import swarm.core.domain.Developer;
@@ -23,6 +24,7 @@ public class TaskService {
 		Map<String, Object> data = new HashMap<>();
 		data.put("title", task.getTitle());
 		data.put("url", task.getUrl());
+		data.put("color", task.getColor());
 
 		String json = JSON.build(data);
 		String response = server.create(SwarmServer.METHODS, json);
@@ -40,6 +42,9 @@ public class TaskService {
 
 	public static void populate(JsonElement element, Task task) {
 		task.setId(element.getAsJsonObject().get("id").getAsInt());
+		if(element.getAsJsonObject().has("color") && !element.getAsJsonObject().get("color").isJsonNull()) {
+			task.setColor(element.getAsJsonObject().get("color").getAsString());
+		}
 		task.setTitle(element.getAsJsonObject().get("title").getAsString());
 		task.setUrl(element.getAsJsonObject().get("url").getAsString());
 	}
@@ -113,4 +118,17 @@ public class TaskService {
 
 		return methods;
 	}
+	
+	public static JsonObject getJson(Task task) {
+		
+		JsonObject data = new JsonObject();
+		data.addProperty("id", task.getId());
+		data.addProperty("color", task.getColor());
+		data.addProperty("title", task.getTitle());
+		data.addProperty("url", task.getUrl());
+		
+		return data;
+		
+	}
+	
 }

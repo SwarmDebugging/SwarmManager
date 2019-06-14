@@ -4,7 +4,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import swarm.core.server.SwarmServer;
 import swarm.core.services.SessionService;
@@ -12,16 +14,12 @@ import swarm.core.services.SessionService;
 public class Session extends Domain {
 	
 	private String label = "";
-	
 	private Date started;
 	private Date finished;
-
 	private String purpose = "";
 	private String description = "";
-
 	private Task task;
 	private Developer developer;
-	
 	private Project project;
 
 	public Session() {
@@ -153,4 +151,19 @@ public class Session extends Domain {
 	public String getURI() {
 		return SwarmServer.getInstance().getServerUrl() + SwarmServer.SESSIONS + "/" + getId(); 
 	}
+	
+	public Map getData() {
+		Map data = new HashMap<>();
+		data.put("id", this.getId());
+		data.put("description", this.getDescription());
+		data.put("started", this.getStarted());
+		data.put("finished", this.getFinished());
+		data.put("label", this.getLabel());
+		data.put("project", this.getProject());
+		data.put("purpose", this.getPurpose());
+		data.put("developer", this.getDeveloper().getData());
+		data.put("task", this.getTask().getData());
+		return data;
+	}
+	
 }

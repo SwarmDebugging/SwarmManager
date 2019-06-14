@@ -26,7 +26,8 @@ public class SwarmServer {
 	private static final String POST = "POST";
 	private static final String PUT = "PUT";
 
-	private static String DEFAULT_URL = "http://server.swarmdebugging.org";
+	//private static String DEFAULT_URL = "http://server.swarmdebugging.org";
+	private static String DEFAULT_URL = "http://localhost:8080";
 	private static SwarmServer server;
 
 	private String serverUrl;
@@ -147,18 +148,7 @@ public class SwarmServer {
 				}
 				br.close();
 
-				String location = urlConnection.getHeaderField("Location");
-				Long id = Long.decode(location.substring(location.lastIndexOf("/") + 1));
-				
-				String s;
-				if(id > -1) {
-					response.deleteCharAt(0);
-					s = "{\"id\": \"" + id + "\" ," + response.toString();
-				} else {
-					s = response.toString();
-				}
-
-				return s;
+				return response.toString();
 			} else {
 				return "";
 			}

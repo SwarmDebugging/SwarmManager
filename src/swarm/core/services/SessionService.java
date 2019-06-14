@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonObject;
 
 import swarm.core.domain.Breakpoint;
 import swarm.core.domain.Developer;
@@ -29,19 +30,13 @@ import swarm.core.util.WorkbenchUtil;
 public class SessionService {
 
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	public static DeveloperService developerService;
+	public static TaskService taskService;
 
 	public static void create(Session session) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
 		
-		Map<String, Object> data = new HashMap<>();
-		data.put("project", session.getProject());
-		data.put("developer", session.getDeveloper().getURI());
-		data.put("task", session.getTask().getURI());
-		data.put("purpose", session.getPurpose());
-		data.put("description", session.getDescription());
-		data.put("label", session.getLabel());
-		
-		String json = JSON.build(data);
+		String json = getJson(session).toString();
 		String response = server.create(SwarmServer.SESSIONS, json);
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -340,5 +335,24 @@ public class SessionService {
 	public static List<Event> getEvents(Session session) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public static JsonObject getJson(Session session) {
+		
+		JsonObject data = new JsonObject();
+		data.addProperty("id", Integer.toString(session.getId()));
+		data.addProperty("description", session.getDescription());
+		//if(session.getFinished() != null)
+		//data.addProperty("started", session.getStarted().toString());
+		if(session.getFinished() != null)
+			data.addProperty("finished", session.getFinished().toString());
+		data.addProperty("label", session.getLabel());
+		data.addProperty("project", session.getProject().getName());
+		data.addProperty("purpose", session.getPurpose());
+		data.add("developer", developerService.getJson(session.getDeveloper()));
+		data.add("task", taskService.getJson(session.getTask()));
+		
+		return data;
+		
 	}
 }

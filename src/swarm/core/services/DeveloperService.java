@@ -1,7 +1,9 @@
 package swarm.core.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -9,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import swarm.core.domain.Developer;
+import swarm.core.domain.Session;
 import swarm.core.domain.Task;
 import swarm.core.server.SwarmServer;
 
@@ -44,6 +47,7 @@ public class DeveloperService {
 
 	public static void populate(JsonElement element, Developer developer) {
 		developer.setId(element.getAsJsonObject().get("id").getAsInt());
+		developer.setColor(element.getAsJsonObject().get("color").getAsString());
 		developer.setName(element.getAsJsonObject().get("name").getAsString());
 	}
 
@@ -124,5 +128,17 @@ public class DeveloperService {
 		} else {
 			return null;
 		}
-	}	
+	}
+	
+	public static JsonObject getJson(Developer developer) {
+			
+		JsonObject data = new JsonObject();
+		data.addProperty("id", developer.getId());
+		data.addProperty("color", developer.getColor());
+		data.addProperty("name", developer.getName());
+		
+		return data;
+		
+	}
+	
 }
