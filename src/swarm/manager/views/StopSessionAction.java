@@ -17,6 +17,13 @@ public class StopSessionAction extends Action {
 
 	public void run() {
 		viewer.debugTracer.stop();
+		
+		/*
+		 Pegar a session ativa no momento
+		 session.setFinished(now);
+		 session.stop();
+		 */
+		
 		if (viewer.activeSession != null) {
 			try {
 				viewer.activeSession.stop();

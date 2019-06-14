@@ -169,19 +169,12 @@ public class SessionService {
 	public static void finish(Session session) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
 		
-		Map<String, Object> data = new HashMap<>();
 		Date now = Calendar.getInstance().getTime();
-		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-
-		data.put("finished", df.format(now));
-		data.put("project", session.getProject());
-		data.put("developer", session.getDeveloper().getURI());
-		data.put("purpose", session.getPurpose());
-		data.put("description", session.getDescription());
-		data.put("label", session.getLabel());		
-		data.put("started", df.format(session.getStarted()));
+//		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+		session.setFinished(now);
+	
 		
-		String json = JSON.build(data);
+		String json = getJson(session).toString();
 		String response = server.update(SwarmServer.SESSIONS + "/" + session.getId(), json);
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -345,7 +338,7 @@ public class SessionService {
 		//if(session.getFinished() != null)
 		//data.addProperty("started", session.getStarted().toString());
 		if(session.getFinished() != null)
-			data.addProperty("finished", session.getFinished().toString());
+			data.addProperty("finished", session.getFinished().getTime());
 		data.addProperty("label", session.getLabel());
 		data.addProperty("project", session.getProject().getName());
 		data.addProperty("purpose", session.getPurpose());
