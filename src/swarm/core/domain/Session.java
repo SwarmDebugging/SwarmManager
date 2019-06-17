@@ -152,18 +152,4 @@ public class Session extends Domain {
 		return SwarmServer.getInstance().getServerUrl() + SwarmServer.SESSIONS + "/" + getId(); 
 	}
 	
-	public Map getData() {
-		Map data = new HashMap<>();
-		data.put("id", this.getId());
-		data.put("description", this.getDescription());
-		data.put("started", this.getStarted());
-		data.put("finished", this.getFinished());
-		data.put("label", this.getLabel());
-		data.put("project", this.getProject());
-		data.put("purpose", this.getPurpose());
-		data.put("developer", this.getDeveloper().getData());
-		data.put("task", this.getTask().getData());
-		return data;
-	}
-	
 }

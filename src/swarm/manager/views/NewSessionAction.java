@@ -43,15 +43,6 @@ public class NewSessionAction extends Action {
 					MessageDialog.openWarning(shell, "Swarm Debugging", "Select a task to start a new session.");
 					return;
 				}
-					
-//				NewSessionDialog dialog = new NewSessionDialog(viewer.getSite().getShell());
-//				
-//				if(dialog.open() != Dialog.OK) {
-//					return;
-//				}
-				
-				
-
 				
 				IJavaProject javaProject = getProject();
 				
@@ -71,9 +62,13 @@ public class NewSessionAction extends Action {
 				session.setDeveloper(viewer.developer);
 				session.setLabel("Session " + new Date());
 				session.setProject(project);
-//				session.setLabel(dialog.getLabel());
-//				session.setDescription(dialog.getDescription());
-//				session.setPurpose(dialog.getPurpose());
+				/** Commented only to ease the tests, but this part is working
+				NewSessionDialog dialog = new NewSessionDialog(viewer.getSite().getShell());
+				dialog.open();
+				session.setLabel(dialog.getLabel());
+				session.setDescription(dialog.getDescription());
+				session.setPurpose(dialog.getPurpose());
+				**/
 				
 				session.create();
 				
