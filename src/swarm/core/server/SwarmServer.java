@@ -15,7 +15,7 @@ public class SwarmServer {
 	public static final String TASKS = "tasks";
 	public static final String SESSIONS = "sessions";
 	public static final String DEVELOPERS = "developers";
-	//public static final String PROJECTS = "projects";
+	public static final String PRODUCTS = "products";
 	public static final String NAMESPACES = "namespaces";
 	public static final String TYPES = "types";
 	public static final String BREAKPOINTS = "breakpoints";

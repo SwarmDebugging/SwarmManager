@@ -5,9 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -216,6 +214,12 @@ public class SessionService {
 				Developer d = DeveloperService.get(id);
 				session.setDeveloper(d);
 			}
+			
+			if(session.getTask() == null && !element.getAsJsonObject().get("task").isJsonNull()) {
+				int id = element.getAsJsonObject().get("task").getAsInt();
+				Task t = TaskService.get(id);
+				session.setTask(t);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -336,4 +340,5 @@ public class SessionService {
 		return data;
 		
 	}
+	
 }

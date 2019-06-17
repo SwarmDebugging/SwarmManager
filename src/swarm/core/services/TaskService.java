@@ -1,9 +1,7 @@
 package swarm.core.services;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,20 +12,18 @@ import swarm.core.domain.Developer;
 import swarm.core.domain.Method;
 import swarm.core.domain.Session;
 import swarm.core.domain.Task;
+import swarm.core.domain.Product;
 import swarm.core.server.SwarmServer;
 
 public class TaskService {
+	
+	public static ProductService productService;
 
 	public static void create(final Task task) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
-
-		Map<String, Object> data = new HashMap<>();
-		data.put("title", task.getTitle());
-		data.put("url", task.getUrl());
-		data.put("color", task.getColor());
-
-		String json = JSON.build(data);
-		String response = server.create(SwarmServer.METHODS, json);
+		
+		String json = getJson(task).toString();
+		String response = server.create(SwarmServer.TASKS, json);
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
 
@@ -47,6 +43,12 @@ public class TaskService {
 		}
 		task.setTitle(element.getAsJsonObject().get("title").getAsString());
 		task.setUrl(element.getAsJsonObject().get("url").getAsString());
+		if(task.getProduct() == null && !element.getAsJsonObject().get("product").isJsonNull()) {
+			JsonElement e = element.getAsJsonObject().get("product");
+			int task_id = e.getAsJsonObject().get("id").getAsInt();
+			Product p = ProductService.get(task_id);
+			task.setProduct(p);
+		}
 	}
 
 	public static List<Task> getAll() {
@@ -119,6 +121,29 @@ public class TaskService {
 		return methods;
 	}
 	
+	public static Task get(int id) {
+		SwarmServer server = SwarmServer.getInstance();
+
+		String response;
+		try {
+			response = server.get(SwarmServer.TASKS + "/" +id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(response);
+
+		if (element.isJsonObject() && element.getAsJsonObject().get("id") != null) {
+			Task t = new Task();
+			TaskService.populate(element, t);
+			return t;
+		} else {
+	 		return null;
+		}	
+	}
+	
 	public static JsonObject getJson(Task task) {
 		
 		JsonObject data = new JsonObject();
@@ -126,6 +151,7 @@ public class TaskService {
 		data.addProperty("color", task.getColor());
 		data.addProperty("title", task.getTitle());
 		data.addProperty("url", task.getUrl());
+		data.add("product", productService.getJson(task.getProduct()));
 		
 		return data;
 		

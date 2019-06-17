@@ -1,17 +1,22 @@
 package swarm.core.domain;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
 import swarm.core.server.SwarmServer;
-import swarm.core.services.JSON;
+import swarm.core.services.TaskService;
 
 public class Task extends Domain {
 
 	String title;
 	String url;
 	String color;
+	Product product;
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 
 	public String getColor() {
 		return color;
@@ -45,13 +50,8 @@ public class Task extends Domain {
 		return this.title;
 	}
 	
-	public Map getData() {
-		Map data = new HashMap<>();
-		data.put("id", this.getId());
-		data.put("color", this.getColor());
-		data.put("title", this.getTitle());
-		data.put("url", this.getUrl());
-		return data;
+	public void create() throws Exception {
+		TaskService.create(this);
 	}
 	
 }
