@@ -5,6 +5,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import swarm.core.domain.Task;
+import swarm.core.services.ProductService;
 import swarm.core.domain.Product;
 import swarm.core.domain.Developer;
 import swarm.core.domain.Session;
@@ -33,11 +34,14 @@ public class NewTaskAction extends Action {
 			Task task = new Task();
 			Product product = new Product();
 			
-			NewTaskDialog dialog = new NewTaskDialog(viewer.getSite().getShell());
+			NewTaskDialog dialog = new NewTaskDialog(viewer.getSite().getShell(), ProductService.getAll());
 			dialog.open();
 			
+			product.setId(dialog.getProductId());
 			product.setName(dialog.getName());
-			product.create();
+			if(product.getId() < 0) {
+				product.create();
+			}
 			
 			task.setColor(dialog.getColor());
 			task.setTitle(dialog.getTitle());
@@ -45,7 +49,7 @@ public class NewTaskAction extends Action {
 			task.setProduct(product);
 			task.create();
 			
-			// Aqui é necessario recarregar a view com a lista de tasks
+			viewer.logged(true);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

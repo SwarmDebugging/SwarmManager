@@ -1,5 +1,9 @@
 package swarm.manager.views;
 
+import java.util.List;
+
+import swarm.core.domain.Product;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -11,21 +15,28 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Combo;
 
 public class NewTaskDialog extends TitleAreaDialog {
 
-	private Text nameText;
 	private Text colorText;
 	private Text titleText;
 	private Text urlText;
 	
-	private String name;
+	private String productName;
 	private String color;
 	private String title;
 	private String url;
+	
+	private int productId;
+	
+	private Combo combo;
+	
+	private List<Product> products;
 
-	public NewTaskDialog(Shell parentShell) {
+	public NewTaskDialog(Shell parentShell, List<Product> products) {
 		super(parentShell);
+		this.products = products;
 	}
 
 	@Override
@@ -48,23 +59,18 @@ public class NewTaskDialog extends TitleAreaDialog {
 		createTitle(container);
 		createColor(container);
 		createUrl(container);
-		createName(container);
+		selectProduct(container);
 
 		return area;
 	}
-
-	private void createName(Composite container) {
+	
+	private void selectProduct(Composite container) {
 		Label productName = new Label(container, SWT.NONE);
 		productName.setText("Product name");
-
-		GridData dataLabel = new GridData();
-		dataLabel.grabExcessHorizontalSpace = true;
-		dataLabel.horizontalAlignment = GridData.FILL;
-
-		nameText = new Text(container, SWT.BORDER);
-		nameText.setLayoutData(dataLabel);
-		Label space = new Label(container, SWT.NONE);
-		space.setText("");
+		combo = new Combo(container, SWT.DROP_DOWN);
+		for(int i=0;i<products.size();i++) {
+			combo.add(products.get(i).getName());
+		}
 	}
 	
 	private void createColor(Composite container) {
@@ -114,19 +120,32 @@ public class NewTaskDialog extends TitleAreaDialog {
 		return true;
 	}
 
-	// ARRUMAR
 	private boolean saveInput() {
-		name = nameText.getText();
+		if(combo.getSelectionIndex() >= 0) {
+			productId = products.get(combo.getSelectionIndex()).getId();
+			productName = products.get(combo.getSelectionIndex()).getName();
+		} else {
+			productId = combo.getSelectionIndex();
+			productName = combo.getText();
+		}
 		color = colorText.getText();
 		title = titleText.getText();
 		url = urlText.getText();
 		
-		if(name != null && name.length() > 0) {
-			return true;
+		if(productName != null && productName.length() > 0) {
+
+			if(title != null && title.length() > 0) {
+				return true;
+			} else {
+				MessageDialog.openWarning(this.getShell(), "Swarm Debugging", "Please, type a title for the task.");
+				return false;	
+			}
+
 		} else {
-			MessageDialog.openWarning(this.getShell(), "Swarm Debugging", "Please, fill the name field.");
+			MessageDialog.openWarning(this.getShell(), "Swarm Debugging", "Please, select or type a product name.");
 			return false;
 		}
+
 	}
 
 	@Override
@@ -136,9 +155,12 @@ public class NewTaskDialog extends TitleAreaDialog {
 		}
 	}
 
-
 	public String getName() {
-		return name;
+		return productName;
+	}
+	
+	public int getProductId() {
+		return productId;
 	}
 	
 	public String getColor() {
