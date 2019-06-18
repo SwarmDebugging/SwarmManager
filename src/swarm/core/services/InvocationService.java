@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import swarm.core.domain.Invocation;
@@ -16,16 +17,14 @@ import swarm.core.server.ElasticServer;
 import swarm.core.server.SwarmServer;
 
 public class InvocationService {
+	
+	public static MethodService methodService;
+	public static SessionService sessionService;
 
 	public static void create(Invocation invocation) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
 		
-		Map<String, Object> data = new HashMap<>();
-		data.put("invoked", invocation.getInvoked().getURI());
-		data.put("invoking", invocation.getInvoking().getURI());
-		data.put("session", invocation.getSession().getURI());
-
-		String json = JSON.build(data);
+		String json = getJson(invocation).toString();
 		String response = server.create(SwarmServer.INVOCATIONS, json);
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -34,7 +33,7 @@ public class InvocationService {
 			int id = element.getAsJsonObject().get("id").getAsInt();
 			invocation.setId(id);
 			
-			ElasticServer.createInvocation(invocation);
+			//ElasticServer.createInvocation(invocation);
 			
 //			if(!Neo4JServer.containsInvocation(invocation)) {
 //				Neo4JServer.createInvocation(invocation);
@@ -81,4 +80,17 @@ public class InvocationService {
 		List<Invocation> list = getInvocationsByMethods(invocation.getSession(), invocation.getInvoking(),invocation.getInvoked()); 
 		return list.size() > 0;
 	}
+	
+	public static JsonObject getJson(Invocation invocation) {
+		
+		JsonObject data = new JsonObject();
+		data.addProperty("id", invocation.getId());
+		data.add("invoking", methodService.getJson(invocation.getInvoking()));
+		data.add("invoked", methodService.getJson(invocation.getInvoked()));
+		data.add("session", sessionService.getJson(invocation.getSession()));
+		
+		return data;
+		
+	}
+	
 }

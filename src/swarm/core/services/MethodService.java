@@ -4,25 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import swarm.core.domain.Method;
+import swarm.core.domain.Task;
 import swarm.core.domain.Type;
 import swarm.core.server.ElasticServer;
 import swarm.core.server.SwarmServer;
 
 public class MethodService {
+	
+	public static TypeService typeService;
 
 	public static void create(final Method method) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
-
-		Map<String, Object> data = new HashMap<>();
-		data.put("type", method.getType().getURI());
-		data.put("name", method.getName());
-		data.put("signature", method.getSignature());
-		data.put("key", method.getKey());
-
-		String json = JSON.build(data);
+		
+		String json = getJson(method).toString();
 		String response = server.create(SwarmServer.METHODS, json);
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -31,7 +29,7 @@ public class MethodService {
 			int id = element.getAsJsonObject().get("id").getAsInt();
 			method.setId(id);
 
-			ElasticServer.createMethod(method);
+			//ElasticServer.createMethod(method);
 			//Neo4JServer.createMethod(method);
 		}
 	}
@@ -83,4 +81,18 @@ public class MethodService {
 			return null;
 		}
 	}
+	
+	public static JsonObject getJson(Method method) {
+		
+		JsonObject data = new JsonObject();
+		data.addProperty("id", method.getId());
+		data.addProperty("name", method.getName());
+		data.addProperty("signature", method.getSignature());
+		data.addProperty("key", method.getKey());
+		data.add("type", typeService.getJson(method.getType()));
+		
+		return data;
+		
+	}
+	
 }

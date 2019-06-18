@@ -18,6 +18,7 @@ import swarm.core.domain.Breakpoint;
 import swarm.core.domain.Developer;
 import swarm.core.domain.Event;
 import swarm.core.domain.Method;
+import swarm.core.domain.Product;
 import swarm.core.domain.Project;
 import swarm.core.domain.Session;
 import swarm.core.domain.Task;
@@ -208,17 +209,19 @@ public class SessionService {
 				p.setJavaProject(javaProject);
 				session.setProject(p);
 			}
-
+			
 			if(session.getDeveloper() == null && !element.getAsJsonObject().get("developer").isJsonNull()) {
-				int id = element.getAsJsonObject().get("developer").getAsInt();
-				Developer d = DeveloperService.get(id);
-				session.setDeveloper(d);
+				JsonElement e = element.getAsJsonObject().get("developer");
+				int dev_id = e.getAsJsonObject().get("id").getAsInt();
+				Developer dev = DeveloperService.get(dev_id);
+				session.setDeveloper(dev);
 			}
 			
 			if(session.getTask() == null && !element.getAsJsonObject().get("task").isJsonNull()) {
-				int id = element.getAsJsonObject().get("task").getAsInt();
-				Task t = TaskService.get(id);
-				session.setTask(t);
+				JsonElement e = element.getAsJsonObject().get("task");
+				int task_id = e.getAsJsonObject().get("id").getAsInt();
+				Task task = TaskService.get(task_id);
+				session.setTask(task);
 			}
 
 		} catch (Exception e) {

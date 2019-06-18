@@ -185,7 +185,12 @@ public class TypeService {
 		type.setName(element.getAsJsonObject().get("name").getAsString());
 		type.setFullName(element.getAsJsonObject().get("fullName").getAsString());
 		type.setFullName(element.getAsJsonObject().get("fullPath").getAsString());
-		type.setSource(element.getAsJsonObject().get("source").getAsString());
+		
+		if(type.getSource() == null && !element.getAsJsonObject().get("artefact").isJsonNull()) {
+			JsonElement e = element.getAsJsonObject().get("artefact");
+			String source = e.getAsJsonObject().get("sourceCode").getAsString();	
+			type.setSource(source);
+		}
 		
 		if(type.getNamespace() == null && !element.getAsJsonObject().get("namespace").isJsonNull()) {
 			JsonElement e = element.getAsJsonObject().get("namespace");
@@ -194,14 +199,13 @@ public class TypeService {
 			type.setNamespace(n);
 		}
 		
-		if(type.getSession() == null && !element.getAsJsonObject().get("session").isJsonNull()) {
+		if(type.getSession() == null) {
 			JsonElement e = element.getAsJsonObject().get("session");
 			int session_id = e.getAsJsonObject().get("id").getAsInt();
 			Session s = SessionService.get(session_id);
 			type.setSession(s);
 		}
 		
-		//TODO to populate namespace and session.
 	}
 	
 	public static JsonObject getJson(Type type) {
