@@ -254,6 +254,29 @@ public class SessionService {
 		}
 	}	
 	
+	public static Session get(int id) {
+		SwarmServer server = SwarmServer.getInstance();
+
+		String response;
+		try {
+			response = server.get(SwarmServer.SESSIONS + "/" +id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(response);
+
+		if (element.isJsonObject() && element.getAsJsonObject().get("id") != null) {
+			Session s = new Session();
+			SessionService.populate(element, s);
+			return s;
+		} else {
+	 		return null;
+		}	
+	}
+	
 	public static List<Method> getStartingMethods(Session session) {
 		List<Method> methods = new ArrayList<Method>();
 		SwarmServer server = SwarmServer.getInstance();

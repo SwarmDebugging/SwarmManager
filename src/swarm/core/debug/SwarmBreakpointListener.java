@@ -120,8 +120,8 @@ public final class SwarmBreakpointListener implements IBreakpointListener {
 					throw new Exception("Problem to create the new namespace");
 				}
 			}
-
-			type = TypeService.createByPath(session,resource.getFullPath().toString());
+			String s = resource.getFullPath().toString();
+			type = TypeService.createByPath(session,s);
 		}
 
 		breakpoint.setType(type);

@@ -4,26 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import swarm.core.domain.Breakpoint;
+import swarm.core.domain.Session;
 import swarm.core.domain.Type;
 import swarm.core.server.ElasticServer;
 import swarm.core.server.SwarmServer;
 
 public class BreakpointService {
 
+	public static TypeService typeService;
+	
 	public static void create(final Breakpoint breakpoint) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
-
-		Map<String, Object> data = new HashMap<>();
-		data.put("type", breakpoint.getType().getURI());
-		data.put("session", breakpoint.getSession().getURI());
-		data.put("lineNumber", breakpoint.getLineNumber());
-		data.put("charStart", breakpoint.getCharStart());
-		data.put("charEnd", breakpoint.getCharEnd());
-
-		String json = JSON.build(data);
+		
+		String json = getJson(breakpoint).toString();
 		String response = server.create(SwarmServer.BREAKPOINTS, json);
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -32,7 +29,7 @@ public class BreakpointService {
 			int id = element.getAsJsonObject().get("id").getAsInt();
 			breakpoint.setId(id);
 
-			ElasticServer.createBreakpoint(breakpoint);
+			//ElasticServer.createBreakpoint(breakpoint);
 		}
 	}
 	
@@ -87,4 +84,18 @@ public class BreakpointService {
 		
 		//TODO Populate Session
 	}
+	
+	public static JsonObject getJson(Breakpoint breakpoint) {
+		
+		JsonObject data = new JsonObject();
+		data.addProperty("id", Integer.toString(breakpoint.getId()));
+		data.addProperty("lineNumber", breakpoint.getLineNumber());
+		data.addProperty("charStart", breakpoint.getCharStart());
+		data.addProperty("charEnd", breakpoint.getCharEnd());
+		data.add("type", typeService.getJson(breakpoint.getType()));
+
+		return data;
+		
+	}
+	
 }

@@ -15,16 +15,24 @@ import org.eclipse.jdt.core.IType;
 
 import swarm.core.domain.Method;
 import swarm.core.domain.Namespace;
+import swarm.core.domain.Product;
 import swarm.core.domain.Session;
+import swarm.core.domain.Task;
 import swarm.core.domain.Type;
+import swarm.core.domain.TypeWrapper;
 import swarm.core.server.ElasticServer;
 import swarm.core.server.SwarmServer;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class TypeService {
+	
+	public static SessionService sessionService;
+	public static NamespaceService namespaceService;
+	public static TypeWrapperService typeWarapperService;
 
 	public static List<Method> getMethods(Type type) throws Exception {
 		List<Method> methods = new ArrayList<>();
@@ -60,31 +68,35 @@ public class TypeService {
 	}
 
 	public static void populate(JsonElement element, Type type, Session session) {
-		type.setSession(session);
-
-		Namespace n = NamespaceService.get(element.getAsJsonObject().get("namespace").getAsJsonObject().get("id")
-				.getAsInt());
-		type.setNamespace(n);
 
 		type.setId(element.getAsJsonObject().get("id").getAsInt());
 		type.setName(element.getAsJsonObject().get("name").getAsString());
 		type.setFullName(element.getAsJsonObject().get("fullName").getAsString());
 		type.setFullPath(element.getAsJsonObject().get("fullPath").getAsString());
-		type.setSource(element.getAsJsonObject().get("source").getAsString());
+		
+		if(type.getSource() == null && !element.getAsJsonObject().get("artefact").isJsonNull()) {
+			JsonElement e = element.getAsJsonObject().get("artefact");
+			String source = e.getAsJsonObject().get("sourceCode").getAsString();
+			type.setSource(source);
+		}
+		
+		type.setSession(session);
+		
+		if(type.getNamespace() == null && !element.getAsJsonObject().get("namespace").isJsonNull()) {
+			JsonElement e = element.getAsJsonObject().get("namespace");
+			int namespace_id = e.getAsJsonObject().get("id").getAsInt();
+			Namespace n = NamespaceService.get(namespace_id);
+			type.setNamespace(n);
+		}
+		
 	}
 
 	public static void create(final Type type) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
-
-		Map<String, Object> data = new HashMap<>();
-		data.put("name", type.getName());
-		data.put("fullName", type.getFullName());
-		data.put("fullPath", type.getFullPath());
-		data.put("session", type.getSession().getURI());
-		data.put("namespace", type.getNamespace().getURI());
-		data.put("source", type.getSource());
-
-		String json = JSON.build(data);
+		String source = type.getSource();
+		TypeWrapper typeWrapper = new TypeWrapper(type, type.getSource());
+		
+		String json = TypeWrapperService.getJson(typeWrapper).toString();
 		String response = server.create(SwarmServer.TYPES, json);
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -93,7 +105,7 @@ public class TypeService {
 			int id = element.getAsJsonObject().get("id").getAsInt();
 			type.setId(id);
 
-			ElasticServer.createType(type);
+			//ElasticServer.createType(type);
 		}
 	}
 
@@ -168,11 +180,42 @@ public class TypeService {
 	}
 
 	private static void populate(JsonElement element, Type type) {
+				
 		type.setId(element.getAsJsonObject().get("id").getAsInt());
 		type.setName(element.getAsJsonObject().get("name").getAsString());
 		type.setFullName(element.getAsJsonObject().get("fullName").getAsString());
+		type.setFullName(element.getAsJsonObject().get("fullPath").getAsString());
 		type.setSource(element.getAsJsonObject().get("source").getAsString());
+		
+		if(type.getNamespace() == null && !element.getAsJsonObject().get("namespace").isJsonNull()) {
+			JsonElement e = element.getAsJsonObject().get("namespace");
+			int namespace_id = e.getAsJsonObject().get("id").getAsInt();
+			Namespace n = NamespaceService.get(namespace_id);
+			type.setNamespace(n);
+		}
+		
+		if(type.getSession() == null && !element.getAsJsonObject().get("session").isJsonNull()) {
+			JsonElement e = element.getAsJsonObject().get("session");
+			int session_id = e.getAsJsonObject().get("id").getAsInt();
+			Session s = SessionService.get(session_id);
+			type.setSession(s);
+		}
 		
 		//TODO to populate namespace and session.
 	}
+	
+	public static JsonObject getJson(Type type) {
+		
+		JsonObject data = new JsonObject();
+		data.addProperty("id", type.getId());
+		data.addProperty("name", type.getName());
+		data.addProperty("fullName", type.getFullName());
+		data.addProperty("fullPath", type.getFullPath());
+		data.add("session", sessionService.getJson(type.getSession()));
+		data.add("namespace", namespaceService.getJson(type.getNamespace()));
+
+		return data;
+		
+	}
+	
 }

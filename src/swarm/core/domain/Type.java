@@ -63,6 +63,7 @@ public class Type extends Domain {
 	public void setSource(String source) {
 		this.source = source;
 	}
+	
 
 	public void create() throws Exception {
 		TypeService.create(this);

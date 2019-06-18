@@ -3,6 +3,7 @@ package swarm.manager.views;
 import java.util.List;
 
 import swarm.core.domain.Product;
+import swarm.core.domain.Type;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -68,8 +69,8 @@ public class NewTaskDialog extends TitleAreaDialog {
 		Label productName = new Label(container, SWT.NONE);
 		productName.setText("Product name");
 		combo = new Combo(container, SWT.DROP_DOWN);
-		for(int i=0;i<products.size();i++) {
-			combo.add(products.get(i).getName());
+		for (Product p : products) {
+			combo.add(p.getName());
 		}
 	}
 	

@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import swarm.core.domain.Namespace;
+import swarm.core.domain.Type;
 import swarm.core.server.SwarmServer;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class NamespaceService {
@@ -44,11 +46,7 @@ public class NamespaceService {
 	public static void create(Namespace namespace) throws Exception {
 		SwarmServer server = SwarmServer.getInstance();
 		
-		Map<String, Object> data = new HashMap<>();
-		data.put("name", namespace.getName());
-		data.put("fullPath", namespace.getFullPath());
-
-		String json = JSON.build(data);
+		String json = getJson(namespace).toString();
 		String response = server.create(SwarmServer.NAMESPACES, json);
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
@@ -82,4 +80,16 @@ public class NamespaceService {
 			return null;
 		}
 	}
+	
+	public static JsonObject getJson(Namespace namespace) {
+		
+		JsonObject data = new JsonObject();
+		data.addProperty("id", namespace.getId());
+		data.addProperty("name", namespace.getName());
+		data.addProperty("fullPath", namespace.getFullPath());
+
+		return data;
+		
+	}
+	
 }
