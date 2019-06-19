@@ -225,8 +225,8 @@ public final class SwarmDebugEventListener implements IDebugEventSetListener {
 									if (invokingMethod == null) {
 										return;
 									}
-
-									Event event = new Event();
+									DebugEvent dgbe = debugEvent;
+ 									Event event = new Event();
 									event.setSession(session);
 									event.setMethod(invokingMethod);
 									event.setDetail(debugEvent.getDetail());
