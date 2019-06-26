@@ -30,7 +30,7 @@ public class EventService {
 			event.setId(id);
 		}
 
-		//ElasticServer.createEvent(event);
+		ElasticServer.createEvent(event);
 	}
 	
 	public static JsonObject getJson(Event event) {

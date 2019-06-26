@@ -14,6 +14,7 @@ import swarm.core.domain.Invocation;
 import swarm.core.domain.Method;
 import swarm.core.domain.Session;
 import swarm.core.server.ElasticServer;
+import swarm.core.server.Neo4JServer;
 import swarm.core.server.SwarmServer;
 
 public class InvocationService {
@@ -33,11 +34,11 @@ public class InvocationService {
 			int id = element.getAsJsonObject().get("id").getAsInt();
 			invocation.setId(id);
 			
-			//ElasticServer.createInvocation(invocation);
+			ElasticServer.createInvocation(invocation);
 			
-//			if(!Neo4JServer.containsInvocation(invocation)) {
-//				Neo4JServer.createInvocation(invocation);
-//			}
+			if(!Neo4JServer.containsInvocation(invocation)) {
+				Neo4JServer.createInvocation(invocation);
+			}
 		}		
 	}
 	

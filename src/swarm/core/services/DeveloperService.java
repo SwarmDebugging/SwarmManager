@@ -117,17 +117,18 @@ public class DeveloperService {
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(response);
 
-		if (element.isJsonObject()) {
-			JsonArray jsonTypes = ((JsonObject) element).get("_embedded").getAsJsonObject().get("developers").getAsJsonArray(); 
+		if (element.isJsonArray()) {
+			JsonArray jsonTypes = (JsonArray) element.getAsJsonArray(); 
 			for (JsonElement typeElement : jsonTypes) {
 				Developer developer = new Developer();
-				populate(typeElement, developer);
+				DeveloperService.populate(typeElement, developer);
 				developers.add(developer);
 			}
 			return developers;
 		} else {
 			return null;
 		}
+		
 	}
 	
 	public static JsonObject getJson(Developer developer) {

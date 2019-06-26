@@ -9,6 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 
+import org.elasticsearch.common.Base64;
+
 import swarm.core.domain.Invocation;
 import swarm.core.domain.Method;
 import swarm.core.services.MethodService;
@@ -96,6 +98,10 @@ public class Neo4JServer {
 //		String userpass = "p8dasvnuxn:7tm40gzfnp";
 //		String basicAuth = "Basic " + new String(Base64.encodeBytes(userpass.getBytes()));
 //		connection.setRequestProperty("Authorization", basicAuth);
+		
+		//String userpass = "neo4j:test1234";
+		//String basicAuth = "Basic " + new String(Base64.encodeBytes(userpass.getBytes()));
+		//urlConnection.setRequestProperty("Authorization", basicAuth);
 
 		OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
 		out.write(request);

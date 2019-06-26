@@ -44,15 +44,14 @@ import org.eclipse.ui.part.ViewPart;
 
 import swarm.core.domain.Developer;
 import swarm.core.domain.Method;
+import swarm.core.domain.Session;
 import swarm.core.domain.Task;
+import swarm.core.services.SessionService;
 import swarm.core.services.TaskService;
 import swarm.core.util.WorkbenchUtil;
 
 public class StartingMethodView extends ViewPart {
 
-	/**
-	 * The ID of the view as specified by the extension.
-	 */
 	public static final String ID = "swarm.manager.views.StartingMethodView";
 
 	private TableViewer viewer;
@@ -63,6 +62,7 @@ public class StartingMethodView extends ViewPart {
 	Developer developer;
 
 	private Combo taskCombo;
+	private List<Task> tasksToSelect;
 
 	class NameSorter extends ViewerSorter {
 	}
@@ -75,7 +75,7 @@ public class StartingMethodView extends ViewPart {
 		parent.setLayout(layout);
 
 		Label projectLabel = new Label(parent, SWT.NONE);
-		projectLabel.setText("Project ");
+		projectLabel.setText("Task ");
 		taskCombo = new Combo(parent, SWT.BORDER | SWT.SEARCH | SWT.READ_ONLY);
 		populateTaskCombo();
 
@@ -92,13 +92,16 @@ public class StartingMethodView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					Task task = (Task) taskCombo.getData(taskCombo.getText());
-					List<Method> methods = getMethods(searchText, task);
+					Task task = new Task();
+					int taskIndex = taskCombo.getSelectionIndex();
+					task = tasksToSelect.get(taskIndex);
+					List<Method> methods = getMethods(searchText, task);	
 					
 					viewer.setInput(methods.toArray());
 				} catch (Exception e) {
 					e.printStackTrace();
-				}			}
+				}			
+			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent event) {}
@@ -109,7 +112,9 @@ public class StartingMethodView extends ViewPart {
 			public void keyTraversed(TraverseEvent event) {
 				if(event.detail == SWT.TRAVERSE_RETURN) {
 					try {
-						Task task = (Task) taskCombo.getData(taskCombo.getText());
+						Task task = new Task();
+						int taskIndex = taskCombo.getSelectionIndex();
+						task = tasksToSelect.get(taskIndex);
 						List<Method> methods = getMethods(searchText, task);						
 						
 						viewer.setInput(methods.toArray());
@@ -132,13 +137,21 @@ public class StartingMethodView extends ViewPart {
 
 	private void populateTaskCombo() {
 		if (developer != null) {
-			List<Task> tasks = TaskService.getAll();
-			String[] taskNames = new String[tasks.size()];
-			for (int i = 0; i < taskNames.length; i++) {
-				taskCombo.setData(tasks.get(i).getTitle(), tasks.get(i));
-				taskNames[i] = tasks.get(i).getTitle();
+			List<Session> sessions = SessionService.getAll();
+			tasksToSelect = new ArrayList<Task>();
+			List<String> taskNames = new ArrayList<String>();
+
+			for (int i = 0; i < sessions.size(); i++) {
+				if(sessions.get(i).getDeveloper().getId() == developer.getId()) {
+					tasksToSelect.add(sessions.get(i).getTask());
+					taskNames.add(sessions.get(i).getTask().getTitle().toString());
+				}
 			}
-			taskCombo.setItems(taskNames);
+			
+			String[] itemsArray = new String[taskNames.size()];
+		    itemsArray = taskNames.toArray(itemsArray);
+
+			taskCombo.setItems(itemsArray);
 		}
 	}
 
@@ -271,7 +284,13 @@ public class StartingMethodView extends ViewPart {
 					Method method = (Method) obj;
 					IJavaProject javaProject;
 					try {
-						javaProject = WorkbenchUtil.getProjectByName(taskCombo.getText());
+						Task taskSelected = tasksToSelect.get(taskCombo.getSelectionIndex());
+						List<Session> sessions = new ArrayList<Session>();
+						sessions = SessionService.getSessions(taskSelected);
+						String projectName = sessions.get(0).getProject().toString();
+						
+						javaProject = WorkbenchUtil.getProjectByName(projectName);
+						
 						IType javaType = javaProject.findType(method.getType().getFullName());
 						
 						IMethod[] methods = javaType.getMethods();

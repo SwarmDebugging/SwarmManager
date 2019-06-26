@@ -8,9 +8,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import swarm.core.domain.Method;
+import swarm.core.domain.Namespace;
 import swarm.core.domain.Task;
 import swarm.core.domain.Type;
 import swarm.core.server.ElasticServer;
+import swarm.core.server.Neo4JServer;
 import swarm.core.server.SwarmServer;
 
 public class MethodService {
@@ -29,8 +31,8 @@ public class MethodService {
 			int id = element.getAsJsonObject().get("id").getAsInt();
 			method.setId(id);
 
-			//ElasticServer.createMethod(method);
-			//Neo4JServer.createMethod(method);
+			ElasticServer.createMethod(method);
+			Neo4JServer.createMethod(method);
 		}
 	}
 
@@ -47,15 +49,19 @@ public class MethodService {
 
 		JsonParser parser = new JsonParser();
 		JsonElement typeElement = parser.parse(response);
-		int typeId = typeElement.getAsJsonObject().get("id").getAsInt();
-		Type type = TypeService.get(typeId);
 		
 		method.setId(methodId);
 		method.setName(element.getAsJsonObject().get("name").getAsString());
 		method.setSignature(element.getAsJsonObject().get("signature").getAsString());
 		method.setKey(element.getAsJsonObject().get("key").getAsString());
 		
-		method.setType(type);
+		if(method.getType() == null && !element.getAsJsonObject().get("type").isJsonNull()) {
+			JsonElement e = element.getAsJsonObject().get("type");
+			int type_id = e.getAsJsonObject().get("id").getAsInt();
+			Type type = TypeService.get(type_id);
+			method.setType(type);
+		}		
+		
 	}
 	
 	

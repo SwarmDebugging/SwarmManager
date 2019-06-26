@@ -1,6 +1,8 @@
 package swarm.core.services;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -13,6 +15,7 @@ import swarm.core.domain.Method;
 import swarm.core.domain.Session;
 import swarm.core.domain.Task;
 import swarm.core.domain.Product;
+import swarm.core.server.Neo4JServer;
 import swarm.core.server.SwarmServer;
 
 public class TaskService {
@@ -30,11 +33,27 @@ public class TaskService {
 		if (element.isJsonObject()) {
 			int id = element.getAsJsonObject().get("id").getAsInt();
 			task.setId(id);
+			
+			updateURL(task);
 
 			// ElasticServer.createTask(task);
-			// Neo4JServer.createTask(method); 	
+			// Neo4JServer.createTask(mask);	// it looks outdated
 		}
 	}
+	
+	public static void updateURL(final Task task) throws Exception {
+		SwarmServer server = SwarmServer.getInstance();
+		
+		task.setUrl(SwarmServer.TASKS + "/" + task.getId());
+		
+		String json = getJson(task).toString();
+		String a = SwarmServer.TASKS + "/" + task.getId();
+		String response = server.update(SwarmServer.TASKS + "/" + task.getId(), json);
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(response);
+
+	}
+	
 
 	public static void populate(JsonElement element, Task task) {
 		task.setId(element.getAsJsonObject().get("id").getAsInt());
@@ -42,7 +61,9 @@ public class TaskService {
 			task.setColor(element.getAsJsonObject().get("color").getAsString());
 		}
 		task.setTitle(element.getAsJsonObject().get("title").getAsString());
-		task.setUrl(element.getAsJsonObject().get("url").getAsString());
+		if(element.getAsJsonObject().has("url") && !element.getAsJsonObject().get("url").isJsonNull()) {
+			task.setUrl(element.getAsJsonObject().get("url").getAsString());
+		}
 		if(task.getProduct() == null && !element.getAsJsonObject().get("product").isJsonNull()) {
 			JsonElement e = element.getAsJsonObject().get("product");
 			int task_id = e.getAsJsonObject().get("id").getAsInt();
@@ -150,7 +171,8 @@ public class TaskService {
 		data.addProperty("id", task.getId());
 		data.addProperty("color", task.getColor());
 		data.addProperty("title", task.getTitle());
-		data.addProperty("url", task.getUrl());
+		if(task.getId() > -1)
+			data.addProperty("url", task.getURI());
 		data.add("product", productService.getJson(task.getProduct()));
 		
 		return data;

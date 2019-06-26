@@ -54,13 +54,4 @@ public class Developer extends Domain {
 		return SwarmServer.getInstance().getServerUrl() + SwarmServer.DEVELOPERS + "/" + getId(); 
 	}
 	
-	public Map getData() {
-		Map data = new HashMap<>();
-		data.put("id", this.getId());
-		data.put("color", this.getColor());
-		data.put("name", this.getName());
-		//data.put("timestamp", this.getTimestamp());
-		return data;
-	}
-	
 }

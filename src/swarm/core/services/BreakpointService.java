@@ -29,7 +29,7 @@ public class BreakpointService {
 			int id = element.getAsJsonObject().get("id").getAsInt();
 			breakpoint.setId(id);
 
-			//ElasticServer.createBreakpoint(breakpoint);
+			ElasticServer.createBreakpoint(breakpoint);
 		}
 	}
 	

@@ -53,7 +53,8 @@ public class ElasticServer {
 	private static final String PUT = "PUT";
 	private static final String DELETE = "DELETE";
 
-	private static String DEFAULT_URL = "http://elastic.swarmdebugging.org";
+	//private static String DEFAULT_URL = "http://elastic.swarmdebugging.org";
+	private static String DEFAULT_URL = "http://localhost:9200";
 	private static ElasticServer server;
 
 	private String serverUrl;
@@ -148,12 +149,13 @@ public class ElasticServer {
 		urlConnection.setUseCaches(false);
 		urlConnection.setConnectTimeout(10000);
 		urlConnection.setReadTimeout(10000);
+		urlConnection.setRequestProperty("Accept", "application/json; charset=UTF-8");
 		urlConnection.setRequestProperty("Content-Type", "application/json");
 		
 		// Bonsai user
-		String userpass = "p8dasvnuxn:7tm40gzfnp";
-		String basicAuth = "Basic " + new String(Base64.encodeBytes(userpass.getBytes()));
-		urlConnection.setRequestProperty("Authorization", basicAuth);
+		//String userpass = "p8dasvnuxn:7tm40gzfnp";
+		//String basicAuth = "Basic " + new String(Base64.encodeBytes(userpass.getBytes()));
+		//urlConnection.setRequestProperty("Authorization", basicAuth);
 		
 		urlConnection.connect();
 
@@ -397,13 +399,13 @@ public class ElasticServer {
 		String query = "swarm/breakpoint/_search";
 		
 		runSearch(project, search, breakpoints, query, SearchMode.BASIC);
-		
-		if(search.length() > 0) {
+		/* Need to fix
+		if(search.length() > 1) {
 			runSearch(project, search, breakpoints, query, SearchMode.FUZZY);
 			runSearch(project, search, breakpoints, query, SearchMode.MATCH);
 			runSearch(project, search, breakpoints, query, SearchMode.WILDCARD);
 		}
-
+		*/
 		return breakpoints;
 	}
 
@@ -412,7 +414,8 @@ public class ElasticServer {
 
 		String response;
 		if(searchMode == SearchMode.BASIC) {
-			response = ElasticServer.getInstance().search(query+"?q=project:" + project.getName() + "&q=" + search , "");
+			String searchText = query + "?q=project:" + project.getName() + "&q=" + search;
+			response = ElasticServer.getInstance().search(searchText, "");
 		} else {
 			String content;
 			StringWriter writer = new StringWriter();

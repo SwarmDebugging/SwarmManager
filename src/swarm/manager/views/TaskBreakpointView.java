@@ -99,7 +99,7 @@ public class TaskBreakpointView extends ViewPart {
 	public void setTask(Task task) {
 		this.task = task;
 		this.setPartName("Breakpoints by " + task.getTitle());
-		String url = SwarmServer.getInstance().getServerUrl() + "taskBreakpoints.html?taskId="+task.getId();
+		String url = SwarmServer.getInstance().getServerUrl() + "taskBreakpoints/"+task.getId();
 		browser.setUrl(url);
 		browser.refresh();
 	}

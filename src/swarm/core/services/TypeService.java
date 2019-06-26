@@ -184,7 +184,7 @@ public class TypeService {
 		type.setId(element.getAsJsonObject().get("id").getAsInt());
 		type.setName(element.getAsJsonObject().get("name").getAsString());
 		type.setFullName(element.getAsJsonObject().get("fullName").getAsString());
-		type.setFullName(element.getAsJsonObject().get("fullPath").getAsString());
+		type.setFullPath(element.getAsJsonObject().get("fullPath").getAsString());
 		
 		if(type.getSource() == null && !element.getAsJsonObject().get("artefact").isJsonNull()) {
 			JsonElement e = element.getAsJsonObject().get("artefact");

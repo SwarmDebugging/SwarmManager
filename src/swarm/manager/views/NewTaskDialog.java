@@ -59,7 +59,7 @@ public class NewTaskDialog extends TitleAreaDialog {
 
 		createTitle(container);
 		createColor(container);
-		createUrl(container);
+		//createUrl(container);
 		selectProduct(container);
 
 		return area;
@@ -101,7 +101,7 @@ public class NewTaskDialog extends TitleAreaDialog {
 		Label space = new Label(container, SWT.NONE);
 		space.setText("");
 	}
-	
+	/**
 	private void createUrl(Composite container) {
 		Label taskUrl = new Label(container, SWT.NONE);
 		taskUrl.setText("Task url");
@@ -115,7 +115,7 @@ public class NewTaskDialog extends TitleAreaDialog {
 		Label space = new Label(container, SWT.NONE);
 		space.setText("");
 	}
-
+	 **/
 	@Override
 	protected boolean isResizable() {
 		return true;
@@ -131,7 +131,7 @@ public class NewTaskDialog extends TitleAreaDialog {
 		}
 		color = colorText.getText();
 		title = titleText.getText();
-		url = urlText.getText();
+		//url = urlText.getText();
 		
 		if(productName != null && productName.length() > 0) {
 

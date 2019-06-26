@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -198,12 +199,12 @@ public class ManagerView extends ViewPart {
 						graphBrowser.setProject(s.getProject());
 						WorkbenchUtil.showView(DynamicMethodCallGraph.ID);
 						
-//						SequencePathView sequenceBrowser = (SequencePathView) WorkbenchUtil.findView(SequencePathView.ID);
-//						String sequenceUrl = SwarmServer.getInstance().getServerUrl() + "stack.html?sessionId="+s.getId();
-//						System.out.println(graphUrl);
-//						sequenceBrowser.setUrl(sequenceUrl);
-//						sequenceBrowser.setProject(s.getProject());
-//						WorkbenchUtil.showView(SequencePathView.ID);
+						SequencePathView sequenceBrowser = (SequencePathView) WorkbenchUtil.findView(SequencePathView.ID);
+						String sequenceUrl = SwarmServer.getInstance().getServerUrl() + "stack.html?sessionId="+s.getId();
+						System.out.println(graphUrl);
+						sequenceBrowser.setUrl(sequenceUrl);
+						sequenceBrowser.setProject(s.getProject());
+						WorkbenchUtil.showView(SequencePathView.ID);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -239,23 +240,23 @@ public class ManagerView extends ViewPart {
 			newProjectAction.setDeveloper(developer);
 			
 			
-//			try {
-//				IViewPart view = WorkbenchUtil.findView(BreakpointView.ID);
-//				BreakpointView breakpointView = (BreakpointView) view;
-//				breakpointView.setDeveloper(developer);
-//				
-//				view = WorkbenchUtil.findView(StartingMethodView.ID);
-//				StartingMethodView startingView = (StartingMethodView) view;
-//				startingView.setDeveloper(developer);
-//				
-//				view = WorkbenchUtil.findView(EndingMethodView.ID);
-//				EndingMethodView endingView = (EndingMethodView) view;
-//				endingView.setDeveloper(developer);				
-//
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			try {
+				IViewPart view = WorkbenchUtil.findView(BreakpointView.ID);
+				BreakpointView breakpointView = (BreakpointView) view;
+				breakpointView.setDeveloper(developer);
+				
+				view = WorkbenchUtil.findView(StartingMethodView.ID);
+				StartingMethodView startingView = (StartingMethodView) view;
+				startingView.setDeveloper(developer);
+				
+				view = WorkbenchUtil.findView(EndingMethodView.ID);
+				EndingMethodView endingView = (EndingMethodView) view;
+				endingView.setDeveloper(developer);				
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

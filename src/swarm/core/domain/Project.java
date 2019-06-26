@@ -40,9 +40,5 @@ public class Project {
 		}
 		return false;
 	}
-	
-//	public String getURI() {
-//		return SwarmServer.getInstance().getServerUrl() + SwarmServer.PROJECTS + "/" + getId(); 
-//	}
 
 }

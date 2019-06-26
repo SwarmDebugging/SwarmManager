@@ -1,6 +1,7 @@
 package swarm.manager.views;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -43,10 +44,13 @@ import org.eclipse.ui.part.ViewPart;
 import swarm.core.domain.Breakpoint;
 import swarm.core.domain.Developer;
 import swarm.core.domain.Project;
+import swarm.core.domain.Session;
 import swarm.core.domain.Task;
 import swarm.core.server.ElasticServer;
+import swarm.core.services.SessionService;
 import swarm.core.services.TaskService;
 import swarm.core.util.WorkbenchUtil;
+
 
 public class BreakpointView extends ViewPart {
 
@@ -108,7 +112,8 @@ public class BreakpointView extends ViewPart {
 				if(event.detail == SWT.TRAVERSE_RETURN) {
 					try {
 						Project project = new Project();
-						project.setName(projectCombo.getText());
+						String projectName = projectCombo.getText();
+						project.setName(projectName);
 						List<Breakpoint> breakpoints = ElasticServer.getBreakpoints(project, searchText.getText().trim());
 						viewer.setInput(breakpoints.toArray());
 						
@@ -147,22 +152,26 @@ public class BreakpointView extends ViewPart {
 		gridData.grabExcessVerticalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
 		
-		viewer.getControl().setLayoutData(gridData);
-		
+		viewer.getControl().setLayoutData(gridData);		
 
 	}
 	
 
 	private void populateTaskCombo() {
 		if (developer != null) {
-			//List<Project> projects = developer.getProjects();
-			List<Task> tasks = TaskService.getAll();
-			String[] projectNames = new String[tasks.size()];
-			for (int i = 0; i < projectNames.length; i++) {
-				projectNames[i] = tasks.get(i).getTitle();
-			}
+			List<Session> sessions = SessionService.getAll();
+			List<String> projectNames = new ArrayList<String>();
 
-			projectCombo.setItems(projectNames);
+			for (int i = 0; i < sessions.size(); i++) {
+				if(sessions.get(i).getDeveloper().getId() == developer.getId()) {
+					projectNames.add(sessions.get(i).getProject().toString());
+				}
+			}
+			
+			String[] itemsArray = new String[projectNames.size()];
+		    itemsArray = projectNames.toArray(itemsArray);
+
+			projectCombo.setItems(itemsArray);
 		}
 	}
 

@@ -55,7 +55,7 @@ public class TaskView extends ViewPart {
 	
 	public void setTask(Task task) {
 		this.task = task;
-		this.setPartName(task.getTitle());
+		this.setPartName("Task View: " + task.getTitle());
 		browser.setUrl(task.getUrl());
 		browser.refresh();
 	}
